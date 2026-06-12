@@ -1,0 +1,90 @@
+{
+  hexguide: {
+    scrying: {
+      open_book: "（按下 %s 在咒术笔记中查看更多信息）",
+    },
+
+    book: {
+      patterns: {
+        spells: {
+          dummy_spells: {
+            "": "示例法术",
+            congratulate: "从栈中移出一个实体，然后恭喜它。",
+          },
+        },
+        great_spells: {
+          dummy_great_spells: {
+            "": "示例大法术",
+            "congratulate/great": "与$(l:patterns/spells/dummy_spells#hexguide:congratulate)$(action)Congratulate/$一样，但是以大法术的形式。",
+          },
+        },
+      },
+    },
+  },
+
+  hexcasting: {
+    action: {
+      "hexguide:": {
+        congratulate: "恭喜玩家",
+        "congratulate/great": "大恭喜！",
+      },
+
+      book: {
+        "hexguide:": {
+          congratulate: "恭喜",
+        },
+      },
+    },
+  },
+
+  text: {
+    hexguide: {
+      congrats: "告诉 %1$s 他们做得很好！",
+    },
+
+    "autoconfig.hexguide": {
+      title: "Hex Guide 配置",
+
+      category: {
+        client: "客户端",
+        server: "服务端",
+      },
+
+      option: {
+        client: {
+          dummyClientConfigOption: {
+            "": "示例客户端选项",
+            "@Tooltip": "这是一个接受布尔值的客户端配置选项示例。",
+          },
+        },
+
+        server: {
+          dummyServerConfigOption: {
+            "": "示例服务端选项",
+            "@Tooltip": "这是一个接受整数的服务端配置选项示例。",
+          },
+        },
+      },
+    },
+  },
+
+  key: {
+    hexguide: {
+      open_hexbook: "打开咒术笔记",
+    },
+  },
+
+  category: {
+    hexguide: {
+      scrying: "Hex Guide",
+    },
+  },
+
+  tab: {
+    hexguide: {
+      patterns: "咒法学|图案",
+      slate_name: "%s之石板",
+      scroll_name: "%s之卷轴",
+    },
+  },
+}

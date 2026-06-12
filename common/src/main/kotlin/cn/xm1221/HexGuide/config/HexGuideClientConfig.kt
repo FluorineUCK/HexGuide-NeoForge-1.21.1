@@ -11,7 +11,6 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.TransitiveObject
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer.GlobalData
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer
-import net.minecraft.world.InteractionResult
 import cn.xm1221.HexGuide.HexGuide
 
 object HexGuideClientConfig {
@@ -27,10 +26,9 @@ object HexGuideClientConfig {
             PartitioningSerializer.wrap(::Toml4jConfigSerializer),
         )
 
-        // when we change the server config in the client gui, also send it to the server config class
-        holder.registerSaveListener { _, config ->
+        // when we change the server config in the client gui, also sync it to the server config holder
+        ConfigHelper.registerAllowSave(holder) { config ->
             HexGuideServerConfig.holder.config = HexGuideServerConfig.GlobalConfig(config.server)
-            InteractionResult.PASS
         }
 
         // when we leave a server, clear our local copy of its config

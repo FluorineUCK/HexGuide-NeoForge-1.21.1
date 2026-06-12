@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger
 import cn.xm1221.HexGuide.config.HexGuideServerConfig
 import cn.xm1221.HexGuide.networking.HexGuideNetworking
 import cn.xm1221.HexGuide.registry.HexGuideActions
+import cn.xm1221.HexGuide.registry.HexGuideCreativeTab
 
 object HexGuide {
     const val MODID = "hexguide"
@@ -22,6 +23,7 @@ object HexGuide {
             HexGuideActions,
         )
         HexGuideNetworking.init()
+        HexGuideCreativeTab.register()
     }
 
     fun initServer() {

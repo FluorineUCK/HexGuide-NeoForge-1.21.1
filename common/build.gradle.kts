@@ -19,6 +19,8 @@ dependencies {
 
     modApi(libs.clothConfig.common)
 
+    modApi(libs.patchouli.xplat)
+
     libs.mixinExtras.common.also {
         implementation(it)
         annotationProcessor(it)

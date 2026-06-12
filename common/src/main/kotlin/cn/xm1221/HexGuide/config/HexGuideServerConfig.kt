@@ -12,7 +12,6 @@ import me.shedaniel.autoconfig.serializer.PartitioningSerializer
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer.GlobalData
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.world.InteractionResult
 import cn.xm1221.HexGuide.HexGuide
 import cn.xm1221.HexGuide.networking.msg.MsgSyncConfigS2C
 
@@ -31,9 +30,8 @@ object HexGuideServerConfig {
             GlobalConfig::class.java,
             PartitioningSerializer.wrap(::Toml4jConfigSerializer),
         )
-
-        // prevent this holder from saving the server config; that happens in the client config gui
-        holder.registerSaveListener { _, _ -> InteractionResult.FAIL }
+        // Prevent server config from auto-saving (it syncs from client config gui)
+        ConfigHelper.registerPreventSave(holder)
     }
 
     fun initServer() {

@@ -1,5 +1,9 @@
 {
   hexguide: {
+    scrying: {
+      open_book: "(Press %s to open The HexBook)",
+    },
+
     book: {
       patterns: {
         spells: {
@@ -63,6 +67,26 @@
           },
         },
       },
+    },
+  },
+
+  key: {
+    hexguide: {
+      open_hexbook: "Open The HexBook",
+    },
+  },
+
+  category: {
+    hexguide: {
+      scrying: "Hex Guide",
+    },
+  },
+
+  tab: {
+    hexguide: {
+      patterns: "All Hex Patterns",
+      slate_name: "Slate - %s",
+      scroll_name: "Scroll - %s",
     },
   },
 }
