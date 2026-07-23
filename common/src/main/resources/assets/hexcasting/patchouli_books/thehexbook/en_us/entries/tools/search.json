@@ -1,0 +1,13 @@
+{
+  "name": "hexguide.entry.search",
+  "category": "hexcasting:patterns",
+  "icon": "minecraft:compass",
+  "sortnum": 999,
+  "advancement": "hexcasting:root",
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "hexcasting:search"
+    }
+  ]
+}

@@ -4,6 +4,20 @@
       open_book: "(Press %s to open The HexBook)",
     },
 
+    search: {
+      placeholder: "Type to search...",
+    },
+
+    entry: {
+      search: "Book Search",
+    },
+
+    page: {
+      search: {
+        "0": "Below is a text search box for the contents and entries of The HexBook. Simply type in a name, keyword, or natural language description to find relevant entries. Click any result to jump directly to that page.",
+      },
+    },
+
     book: {
       patterns: {
         spells: {
