@@ -1,11 +1,16 @@
 {
   "name": "hexguide.entry.search",
-  "category": "hexcasting:patterns",
+  "category": "hexcasting:basics",
   "icon": "minecraft:compass",
   "sortnum": 999,
   "advancement": "hexcasting:root",
   "read_by_default": true,
   "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "hexguide.page.search.0"
+    }
+    ,
     {
       "type": "hexcasting:search"
     }
