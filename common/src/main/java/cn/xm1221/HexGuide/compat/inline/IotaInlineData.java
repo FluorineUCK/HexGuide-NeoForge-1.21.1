@@ -3,6 +3,7 @@ package cn.xm1221.HexGuide.compat.inline;
 import at.petrak.hexcasting.api.HexAPI;
 import at.petrak.hexcasting.api.casting.iota.Iota;
 import at.petrak.hexcasting.api.casting.iota.IotaType;
+import cn.xm1221.HexGuide.HexGuide;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IotaInlineData implements InlineData<IotaInlineData> {
 
-    public static final ResourceLocation RENDERER_ID = new ResourceLocation(HexAPI.MOD_ID, "iota");
+    public static final ResourceLocation RENDERER_ID = new ResourceLocation(HexGuide.MODID, "iota");
 
     private final String nbtStr;
     private Iota cached;

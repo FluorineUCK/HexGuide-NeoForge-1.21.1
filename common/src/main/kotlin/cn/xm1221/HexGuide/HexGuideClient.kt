@@ -1,5 +1,6 @@
 package cn.xm1221.HexGuide
 
+import cn.xm1221.HexGuide.compat.inline.IotaInlineRender
 import cn.xm1221.HexGuide.compat.inline.IotaMatcher
 import cn.xm1221.HexGuide.config.HexGuideClientConfig
 import cn.xm1221.HexGuide.scrying.ScryingBookOverlay
@@ -12,6 +13,7 @@ object HexGuideClient {
         HexGuideClientConfig.init()
         ScryingBookOverlay.registerSlateOverlay()
         InlineClientAPI.INSTANCE.addMatcher(IotaMatcher.INSTANCE)
+        InlineClientAPI.INSTANCE.addRenderer(IotaInlineRender())
     }
 
     fun getConfigScreen(parent: Screen): Screen {

@@ -1,5 +1,6 @@
 package cn.xm1221.HexGuide
 
+import cn.xm1221.HexGuide.compat.inline.InlineHexGuide
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -24,6 +25,7 @@ object HexGuide {
             HexGuideCreativeTab
         )
         HexGuideNetworking.init()
+        InlineHexGuide.init()
         //HexGuideCreativeTab.register()
     }
 
