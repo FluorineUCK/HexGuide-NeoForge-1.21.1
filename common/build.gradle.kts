@@ -21,6 +21,8 @@ dependencies {
 
     modApi(libs.patchouli.xplat)
 
+    modImplementation(libs.inline.fabric)
+
     libs.mixinExtras.common.also {
         implementation(it)
         annotationProcessor(it)

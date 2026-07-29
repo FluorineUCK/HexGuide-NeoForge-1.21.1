@@ -58,6 +58,7 @@ hexguideModDependencies {
     requires("cloth-config")
     requires(curseforge = "hexcasting", modrinth = "hex-casting")
     requires("kotlin-for-forge")
+    requires("inline")
 }
 
 dependencies {
@@ -73,7 +74,7 @@ dependencies {
     modImplementation(libs.paucal.forge)
     modLocalRuntime(libs.patchouli.forge)
     modLocalRuntime(libs.caelus)
-    modLocalRuntime(libs.inline.forge) { isTransitive = false }
+    modApi(libs.inline.forge) { isTransitive = false }
 
     modApi(libs.clothConfig.forge)
 

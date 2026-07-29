@@ -21,9 +21,10 @@ object HexGuide {
         HexGuideServerConfig.init()
         initRegistries(
             HexGuideActions,
+            HexGuideCreativeTab
         )
         HexGuideNetworking.init()
-        HexGuideCreativeTab.register()
+        //HexGuideCreativeTab.register()
     }
 
     fun initServer() {

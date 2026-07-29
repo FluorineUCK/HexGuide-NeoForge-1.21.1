@@ -28,8 +28,8 @@ public class BookSearchComponent implements ICustomComponent {
 
     private static final int W = 108, PAGE_H = 156;
     private static final int INPUT_H = 12, BTN_H = 10, ROW_H = 10, NAV_H = 10;
-    private static final int BTN_Y = INPUT_H + 1;           // 按钮行Y
-    private static final int LIST_Y = BTN_Y + BTN_H + 1;    // 结果列表Y
+    private static final int BTN_Y = INPUT_H + 1;
+    private static final int LIST_Y = BTN_Y + BTN_H + 1;
     private static final int MAX_ROWS = (PAGE_H - LIST_Y - NAV_H - 2) / ROW_H;
 
     private transient int x, y, pageNum;
@@ -62,10 +62,8 @@ public class BookSearchComponent implements ICustomComponent {
         if (input == null) return;
         var f = Minecraft.getInstance().font; int total = filtered.size();
 
-        // 输入框（顶）
         input.render(g, mx, my, pt);
 
-        // 按钮行
         int by = y + BTN_Y;
         int bw = f.width("back") + 4;
         boolean hBS = c.isAreaHovered(mx, my, x, by, bw, BTN_H);
@@ -76,7 +74,6 @@ public class BookSearchComponent implements ICustomComponent {
         g.fill(cxx, by, cxx + cw, by + BTN_H, hCL ? 0x44_666666 : 0x44_333333);
         g.drawString(f, "clear", cxx + 2, by, hCL ? 0xFF_FFCC00 : 0xFF_888888);
 
-        // 结果列表
         int ly = y + LIST_Y;
         for (int i = scrollOff; i < total && i < scrollOff + MAX_ROWS; i++) {
             var h = filtered.get(i);
@@ -86,7 +83,6 @@ public class BookSearchComponent implements ICustomComponent {
             ly += ROW_H;
         }
 
-        // 翻页
         int ny = y + PAGE_H - NAV_H;
         boolean hUp = c.isAreaHovered(mx, my, x, ny, 20, NAV_H);
         g.drawString(f, hUp ? "▲" : "△", x, ny, hUp ? 0xFF_FFFF00 : 0xFF_888888);
@@ -102,11 +98,9 @@ public class BookSearchComponent implements ICustomComponent {
         if (input == null) return false;
         int total = filtered.size(); var f = Minecraft.getInstance().font;
 
-        // 输入框
         if (c.isAreaHovered((int) mx, (int) my, x, y, W, INPUT_H)) {
             input.mouseClicked(mx, my, btn); focusScreenOn(input); return true;
         }
-        // back
         int by = y + BTN_Y, bw = f.width("back") + 4;
         if (c.isAreaHovered((int) mx, (int) my, x, by, bw, BTN_H)) {
             String v = input.getValue(); if (!v.isEmpty()) {
@@ -114,17 +108,14 @@ public class BookSearchComponent implements ICustomComponent {
                 if (p > 0) { input.setValue(v.substring(0, p-1)+v.substring(p)); input.setCursorPosition(p-1); }
             } return true;
         }
-        // clear
         int cw = f.width("clear") + 4, cxx = x + W - cw;
         if (c.isAreaHovered((int) mx, (int) my, cxx, by, cw, BTN_H)) { input.setValue(""); return true; }
-        // 结果
         int ly = y + LIST_Y;
         for (int i = scrollOff; i < total && i < scrollOff + MAX_ROWS; i++) {
             if (c.isAreaHovered((int) mx, (int) my, x, ly, W, ROW_H)) {
                 c.navigateToEntry(filtered.get(i).eid(), filtered.get(i).page(), false); return true;
             } ly += ROW_H;
         }
-        // 翻页
         int ny = y + PAGE_H - NAV_H;
         if (total > MAX_ROWS && c.isAreaHovered((int) mx, (int) my, x, ny, 20, NAV_H))
             { scrollOff = Math.max(0, scrollOff - MAX_ROWS); return true; }
@@ -153,7 +144,11 @@ public class BookSearchComponent implements ICustomComponent {
                     StringBuilder sb = new StringBuilder(en).append(' ');
                     String ty = r.has("type") ? r.get("type").getAsString() : "";
                     if ("hexcasting:pattern".equals(ty)) {
-                        if (r.has("op_id")) sb.append(r.get("op_id").getAsString()).append(' ');
+                        if (r.has("op_id")) {
+                            String op = r.get("op_id").getAsString();
+                            sb.append(op).append(' ');
+                            sb.append(resolve("hexcasting.action." + op)).append(' ');
+                        }
                         if (r.has("input")) sb.append(r.get("input").getAsString()).append(' ');
                         if (r.has("output")) sb.append(r.get("output").getAsString()).append(' ');
                     }
@@ -167,12 +162,10 @@ public class BookSearchComponent implements ICustomComponent {
     private static String resolve(String k) {
         try { return Component.translatable(k).getString(); } catch (Exception ig) { return k; }
     }
-
     private static String clip(net.minecraft.client.gui.Font f, String s, int w) {
         while (f.width(s) > w && s.length() > 1) s = s.substring(0, s.length() - 1);
         return s;
     }
-
     private static void focusScreenOn(GuiEventListener w) {
         var s = Minecraft.getInstance().screen;
         if (s == null) return;

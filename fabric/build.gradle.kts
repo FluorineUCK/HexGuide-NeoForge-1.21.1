@@ -44,6 +44,7 @@ hexguideModDependencies {
     requires(curseforge = "hexcasting", modrinth = "hex-casting")
     requires("fabric-api")
     requires("fabric-language-kotlin")
+    requires("inline")
     optional("modmenu")
 }
 
@@ -69,7 +70,7 @@ dependencies {
     modLocalRuntime(libs.cardinalComponents)
     modLocalRuntime(libs.serializationHooks)
     modLocalRuntime(libs.trinkets)
-    modLocalRuntime(libs.inline.fabric) { isTransitive = false }
+    modApi(libs.inline.fabric) { isTransitive = false }
 
     libs.mixinExtras.fabric.also {
         localRuntime(it)

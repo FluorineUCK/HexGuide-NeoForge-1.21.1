@@ -8,8 +8,7 @@ import at.petrak.hexcasting.common.lib.HexBlocks
 import at.petrak.hexcasting.common.lib.HexItems
 import at.petrak.hexcasting.common.lib.hex.HexActions
 import cn.xm1221.HexGuide.HexGuide
-import net.minecraft.core.Registry
-import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
@@ -17,9 +16,13 @@ import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
 
 /**
- * Creative mode tab that contains slates and large scrolls with every registered Hex Casting pattern.
+ * 创造模式物品栏 —— 展示所有非 Per-World 图案的石板和大型卷轴。
+ * 使用 HexGuideRegistrar 以保证 Forge 端通过 RegisterEvent 安全注册。
  */
-object HexGuideCreativeTab {
+object HexGuideCreativeTab : HexGuideRegistrar<CreativeModeTab>(
+    Registries.CREATIVE_MODE_TAB,
+    { net.minecraft.core.registries.BuiltInRegistries.CREATIVE_MODE_TAB },
+) {
 
     @Volatile
     private var cachedEntries: List<ActionInfo>? = null
@@ -31,46 +34,40 @@ object HexGuideCreativeTab {
         val actionName: String
     )
 
-    val TAB: CreativeModeTab = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
-        .title(Component.translatable("tab.hexguide.patterns"))
-        .icon { ItemStack(HexBlocks.SLATE.asItem()) }
-        .displayItems { _, output ->
-            val entries = getActionEntries()
-            // All slates first
-            for (info in entries) {
-                val actionNameStr = Component.translatable(info.actionName).string
-                val slate = ItemStack(HexItems.SLATE)
-                writePatternToSlate(slate, info.entry.prototype())
-                slate.setHoverName(Component.translatable("tab.hexguide.slate_name", actionNameStr))
-                output.accept(slate)
+    val PATTERNS = register("patterns") {
+        CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+            .title(Component.translatable("tab.hexguide.patterns"))
+            .icon { ItemStack(HexBlocks.SLATE.asItem()) }
+            .displayItems { _, output ->
+                val entries = getActionEntries()
+                // 先加石板
+                for (info in entries) {
+                    val name = Component.translatable(info.actionName).string
+                    val slate = ItemStack(HexItems.SLATE)
+                    writePatternToSlate(slate, info.entry.prototype())
+                    slate.setHoverName(Component.translatable("tab.hexguide.slate_name", name))
+                    output.accept(slate)
+                }
+                // 再加卷轴
+                for (info in entries) {
+                    val name = Component.translatable(info.actionName).string
+                    val scroll = ItemStack(HexItems.SCROLL_LARGE)
+                    writePatternToScroll(scroll, info.entry.prototype())
+                    scroll.setHoverName(Component.translatable("tab.hexguide.scroll_name", name))
+                    output.accept(scroll)
+                }
             }
-            // Then all large scrolls
-            for (info in entries) {
-                val actionNameStr = Component.translatable(info.actionName).string
-                val scroll = ItemStack(HexItems.SCROLL_LARGE)
-                writePatternToScroll(scroll, info.entry.prototype())
-                scroll.setHoverName(Component.translatable("tab.hexguide.scroll_name", actionNameStr))
-                output.accept(scroll)
-            }
-        }
-        .build()
-
-    fun register() {
-        Registry.register(
-            BuiltInRegistries.CREATIVE_MODE_TAB,
-            HexGuide.id("patterns"),
-            TAB
-        )
+            .build()
     }
 
     private fun getActionEntries(): List<ActionInfo> {
         cachedEntries?.let { return it }
         val result = HexActions.REGISTRY.entrySet()
             .filter { (key, _) ->
-                // Exclude per-world patterns
-                !HexActions.REGISTRY.getHolder(key)
-                    .map { it.`is`(HexTags.Actions.PER_WORLD_PATTERN) }
-                    .orElse(false)
+                val holder = HexActions.REGISTRY.getHolder(key)
+                val isPerWorld = holder.map { it.`is`(HexTags.Actions.PER_WORLD_PATTERN) }.orElse(false)
+                val isGreat = holder.map { it.`is`(HexTags.Actions.REQUIRES_ENLIGHTENMENT) }.orElse(false)
+                !isPerWorld && !isGreat
             }
             .map { (key, entry) ->
                 ActionInfo(
@@ -86,18 +83,10 @@ object HexGuideCreativeTab {
     }
 
     private fun writePatternToSlate(stack: ItemStack, pattern: HexPattern) {
-        try {
-            HexItems.SLATE.writeDatum(stack, PatternIota(pattern))
-        } catch (_: Exception) {
-            // Silently skip patterns that can't be written
-        }
+        try { HexItems.SLATE.writeDatum(stack, PatternIota(pattern)) } catch (_: Exception) {}
     }
 
     private fun writePatternToScroll(stack: ItemStack, pattern: HexPattern) {
-        try {
-            HexItems.SCROLL_LARGE.writeDatum(stack, PatternIota(pattern))
-        } catch (_: Exception) {
-            // Silently skip patterns that can't be written
-        }
+        try { HexItems.SCROLL_LARGE.writeDatum(stack, PatternIota(pattern)) } catch (_: Exception) {}
     }
 }
