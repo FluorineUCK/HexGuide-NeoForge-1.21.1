@@ -15,6 +15,6 @@ public class IotaInlineDataType implements InlineData.InlineDataType<IotaInlineD
 
     @Override
     public Codec<IotaInlineData> getCodec() {
-        return Codec.STRING.xmap(IotaInlineData::new, IotaInlineData::getNbtStr);
+        return Codec.STRING.xmap(IotaInlineData::new, IotaInlineData::getRaw);
     }
 }

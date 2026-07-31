@@ -6,6 +6,8 @@ import at.petrak.hexcasting.api.casting.math.HexDir
 import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.common.lib.HexRegistries
 import at.petrak.hexcasting.common.lib.hex.HexActions
+import cn.xm1221.HexGuide.casting.actions.OpDemoPlay
+import cn.xm1221.HexGuide.casting.actions.OpDemoSave
 import cn.xm1221.HexGuide.casting.actions.OpTextCopy
 
 
@@ -17,6 +19,8 @@ object HexGuideActions : HexGuideRegistrar<ActionRegistryEntry>(
 
     //val GREAT_CONGRATULATE = make("congratulate/great", HexDir.EAST, "qwwqqqwwqwded", OpCongratulate)
     val COPY = make("copy",HexDir.NORTH_EAST,"dadade", OpTextCopy())
+    val DEMO_SAVE = make("demo/save",HexDir.NORTH_EAST,"qaqqqq", OpDemoSave())
+    val DEMO_PLAY = make("demo/play",HexDir.NORTH_WEST,"edeeee", OpDemoPlay())
 
     private fun make(name: String, startDir: HexDir, signature: String, action: Action) =
         make(name, startDir, signature) { action }

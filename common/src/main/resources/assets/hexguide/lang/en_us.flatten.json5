@@ -8,6 +8,10 @@
       placeholder: "Type to search...",
     },
 
+    copy: {
+      hover: "Click to copy",
+    },
+
     entry: {
       search: "Book Search",
     },

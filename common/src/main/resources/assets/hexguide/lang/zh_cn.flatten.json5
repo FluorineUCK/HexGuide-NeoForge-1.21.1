@@ -8,6 +8,10 @@
       placeholder: "输入以搜索...",
     },
 
+    copy: {
+      hover: "点击以复制",
+    },
+
     entry: {
       search: "搜索手册",
     },
