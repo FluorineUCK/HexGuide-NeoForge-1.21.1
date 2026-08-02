@@ -10,10 +10,19 @@
 
     copy: {
       hover: "Click to copy",
+      saved: "Saved as %s (click to copy)",
+    },
+
+    categories: {
+      guide: "Hex Guide",
+      description: ""
     },
 
     entry: {
       search: "Book Search",
+      guide: {
+        iotas: "Iotas"
+      }
     },
 
     page: {

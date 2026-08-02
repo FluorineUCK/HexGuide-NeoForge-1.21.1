@@ -10,16 +10,33 @@
 
     copy: {
       hover: "点击以复制",
+      saved: "已保存为 %s（点击复制）",
     },
+
+    categories: {
+      guide: "咒法学简明概论",
+      description: "越思考，越智慧"
+    },
+
 
     entry: {
       search: "搜索手册",
+      guide: {
+        iotas: "Iotas"
+      }
     },
 
     page: {
       search: {
         "0": "下面是一个用于搜索《咒术笔记》内容和条目的文本框。只需输入名称、关键词或自然语言描述即可找到相关条目。点击任意结果直接跳转到对应页面。",
       },
+      guide: {
+        iotas: {
+          "0":"咒法学是利用媒质，操作Iota，进而操作客观世界，改写现实的一门技术。Iota是世间万物的“名字”，我们利用图案获取Iota，转换Iota的类型，对Iota进行运算，或者执行Iota，都是为了从自然那获取我们想要得到的信息(Iota)。进而将这些信息按照正确的形式提供给图案，来实现我们想要的效果。多种图案组合，便可以创造出如艺术般的强大法术。",
+          "1": "Iota的种类繁多，常见的有向量Iota iota:hexguide:vec0.json，数字Iota iota:double0.json，实体Iota，图案Iota，布尔值iota:bool0.json以及列表Iota iota:list0.json等。这些Iota因其类型不同，也就有着不同的意义，譬如向量Iota通常用来表示位置、朝向、速度，而数字Iota则表示数字，最为特别的是图案Iota，它代表一个也许可以作为咒术执行的图案，而图案所组成的列表，往往意味着有一整串有意义的图案所组成的咒术。比如 iota:list0.json",
+          "2": "除了以上提到的这几种，像是垃圾Iota iota:garbage.json，以及iota:null.json也是常见的Iota"
+        }
+      }
     },
 
     book: {

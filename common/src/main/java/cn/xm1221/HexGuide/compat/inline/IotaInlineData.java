@@ -3,7 +3,12 @@ package cn.xm1221.HexGuide.compat.inline;
 import cn.xm1221.HexGuide.HexGuide;
 import at.petrak.hexcasting.api.casting.iota.Iota;
 import at.petrak.hexcasting.api.casting.iota.IotaType;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -17,6 +22,10 @@ import net.minecraft.server.packs.resources.Resource;
 import com.samsthenerd.inline.api.InlineData;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.util.Optional;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
@@ -75,10 +84,10 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
 
     // ─── parse ───────────────────────────────────────────────
 
-    /** 工厂：含 .json 且含 : 则走资源文件，否则 Ascii85 */
+    /** 工厂：含 .json 则走资源文件（可省略命名空间，默认 hexguide），否则 Ascii85 */
     @org.jetbrains.annotations.Nullable
     public static IotaInlineData parse(String raw) {
-        if (raw.contains(".json") && raw.contains(":")) {
+        if (raw.contains(".json")) {
             var data = new IotaInlineData(raw, raw);
             if (data.getOrDeserialize() != null) return data;
             return null;
@@ -86,26 +95,108 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
         return new IotaInlineData(raw);
     }
 
-    /** 从 assets/&lt;ns&gt;/iotas/&lt;path&gt;.json 加载 Iota */
+    /** 加载 Iota：优先资源管理器 assets/&lt;ns&gt;/iotas/&lt;path&gt;.json，回退游戏目录 &lt;gameDir&gt;/&lt;ns&gt;/iotas/&lt;path&gt;.json */
     private static Iota loadFromResource(String ref) {
         try {
+            // 无冒号 → 默认命名空间 hexguide（短引用 iota:name.json）
             int colon = ref.lastIndexOf(':');
-            if (colon <= 0) return null;
-            String ns = ref.substring(0, colon);
-            String path = ref.substring(colon + 1);
+            String ns, path;
+            if (colon > 0) {
+                ns = ref.substring(0, colon);
+                path = ref.substring(colon + 1);
+            } else {
+                ns = HexGuide.MODID;
+                path = ref;
+            }
             if (!path.endsWith(".json")) path += ".json";
+
+            // 1) 资源管理器（模组资源/资源包）
             ResourceLocation rl = new ResourceLocation(ns, "iotas/" + path);
             var mgr = Minecraft.getInstance().getResourceManager();
             Optional<Resource> opt = mgr.getResource(rl);
-            if (opt.isEmpty()) return null;
-            try (var reader = new InputStreamReader(opt.get().open())) {
-                var json = JsonParser.parseReader(reader).toString();
-                return IotaType.deserialize(TagParser.parseTag(json), null);
+            if (opt.isPresent()) {
+                try (var reader = new InputStreamReader(opt.get().open())) {
+                    return deserializeJson(JsonParser.parseReader(reader));
+                }
             }
+
+            // 2) 游戏目录（运行时自动保存的文件）
+            Path file = Platform.getGameFolder().resolve(ns).resolve("iotas").resolve(path);
+            if (Files.exists(file)) {
+                return deserializeJson(JsonParser.parseString(Files.readString(file)));
+            }
+            return null;
         } catch (Exception ignored) { return null; }
     }
 
+    /** 解析 iota 资源文件：{"nbt":"<nbt字符串>"} 或直接 NBT JSON */
+    private static Iota deserializeJson(JsonElement elem) throws CommandSyntaxException {
+        if (elem != null && elem.isJsonObject() && elem.getAsJsonObject().has("nbt")) {
+            String nbt = elem.getAsJsonObject().get("nbt").getAsString();
+            return IotaType.deserialize(TagParser.parseTag(nbt), null);
+        }
+        return IotaType.deserialize(TagParser.parseTag(elem.toString()), null);
+    }
+
+    // ─── save to game dir ──────────────────────────────────────
+
+    /**
+     * 将 Iota 以 JSON 形式自动保存到 &lt;gameDir&gt;/&lt;ns&gt;/iotas/&lt;hash&gt;[-&lt;counter&gt;].json。
+     * 返回短资源名 "hash[-counter]"（无命名空间，完整引用为 iota:hash.json，可放进书本 116px 页面不被换行截断）。
+     * 失败返回 null。
+     */
+    @org.jetbrains.annotations.Nullable
+    public static String saveToGameDir(Iota iota) {
+        try {
+            String tagStr = IotaType.serialize(iota).toString();
+            String ns = HexGuide.MODID;
+            String hash = shortHash(tagStr);
+
+            Path dir = Platform.getGameFolder().resolve(ns).resolve("iotas");
+            Files.createDirectories(dir);
+
+            // 短名 hash.json；若已存在同名文件，追加 -1、-2...
+            String name = hash;
+            Path file = dir.resolve(name + ".json");
+            int counter = 0;
+            while (Files.exists(file) && counter < 100) {
+                counter++;
+                name = hash + "-" + counter;
+                file = dir.resolve(name + ".json");
+            }
+            Files.writeString(file, saveJson(tagStr));
+
+            return name;
+        } catch (Exception ignored) { return null; }
+    }
+
+    /** 包装为 {"nbt":"<nbt字符串>"}，Gson 自动转义 */
+    private static String saveJson(String tagStr) {
+        JsonObject obj = new JsonObject();
+        obj.add("nbt", new JsonPrimitive(tagStr));
+        return obj.toString();
+    }
+
+    /** 序列化文本的 SHA-256 前 6 位十六进制 */
+    private static String shortHash(String s) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] d = md.digest(s.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 3; i++) sb.append(String.format("%02x", d[i] & 0xFF));
+            return sb.toString();
+        } catch (Exception e) {
+            return Integer.toHexString(s.hashCode() & 0xFFFFFF);
+        }
+    }
+
     // ─── encode ───────────────────────────────────────────────
+
+    /** 根据 "ns:path"（可带 .json）加载 Iota 并返回其 display Component；失败返回原引用文本 */
+    public static Component displayFromRef(String ref) {
+        Iota iota = loadFromResource(ref);
+        return iota != null ? iota.display() : Component.literal(ref);
+    }
 
     public static String encode(Iota iota) {
         var tag = IotaType.serialize(iota);

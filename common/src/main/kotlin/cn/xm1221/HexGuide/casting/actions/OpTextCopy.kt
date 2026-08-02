@@ -32,6 +32,14 @@ class OpTextCopy: ConstMediaAction {
         val text = iota.display().copy().withStyle(Style.EMPTY.withClickEvent(event).withHoverEvent(event2))
         if(caster is ServerPlayer){
             caster.sendSystemMessage(text)
+            // 自动以 JSON 形式保存到 <gameDir>/<ns>/iotas/，并提示资源引用
+            val savedRef = IotaInlineData.saveToGameDir(iota)
+            if (savedRef != null) {
+                val ref = "iota:$savedRef.json"
+                val saveMsg = Component.translatable("hexguide.copy.saved", ref)
+                    .withStyle(Style.EMPTY.withClickEvent(ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ref)))
+                caster.sendSystemMessage(saveMsg)
+            }
         }
         return listOf()
     }

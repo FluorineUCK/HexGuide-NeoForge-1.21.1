@@ -1,7 +1,9 @@
 package cn.xm1221.HexGuide.patchouli;
 
 import at.petrak.hexcasting.api.HexAPI;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -149,10 +151,10 @@ public class BookSearchComponent implements ICustomComponent {
                             sb.append(op).append(' ');
                             sb.append(resolve("hexcasting.action." + op)).append(' ');
                         }
-                        if (r.has("input")) sb.append(r.get("input").getAsString()).append(' ');
-                        if (r.has("output")) sb.append(r.get("output").getAsString()).append(' ');
+                        if (r.has("input")) sb.append(jsonText(r.get("input"))).append(' ');
+                        if (r.has("output")) sb.append(jsonText(r.get("output"))).append(' ');
                     }
-                    if (r.has("text")) sb.append(resolve(r.get("text").getAsString())).append(' ');
+                    if (r.has("text")) sb.append(jsonText(r.get("text"))).append(' ');
                     out.add(new Hit(e.getId(), pi, en, sb.toString()));
                 }
             }
@@ -161,6 +163,22 @@ public class BookSearchComponent implements ICustomComponent {
 
     private static String resolve(String k) {
         try { return Component.translatable(k).getString(); } catch (Exception ig) { return k; }
+    }
+
+    /** 安全提取 JSON 中的文本：字符串→翻译键解析；对象→取 translate/text 字段，否则序列化 */
+    private static String jsonText(JsonElement el) {
+        if (el == null || el.isJsonNull()) return "";
+        if (el.isJsonPrimitive()) {
+            JsonPrimitive p = el.getAsJsonPrimitive();
+            return p.isString() ? resolve(p.getAsString()) : p.toString();
+        }
+        if (el.isJsonObject()) {
+            JsonObject o = el.getAsJsonObject();
+            if (o.has("translate")) return resolve(o.get("translate").getAsString());
+            if (o.has("text") && o.get("text").isJsonPrimitive()) return o.get("text").getAsString();
+            return o.toString();
+        }
+        return el.toString();
     }
     private static String clip(net.minecraft.client.gui.Font f, String s, int w) {
         while (f.width(s) > w && s.length() > 1) s = s.substring(0, s.length() - 1);

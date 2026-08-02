@@ -19,8 +19,8 @@ object HexGuideActions : HexGuideRegistrar<ActionRegistryEntry>(
 
     //val GREAT_CONGRATULATE = make("congratulate/great", HexDir.EAST, "qwwqqqwwqwded", OpCongratulate)
     val COPY = make("copy",HexDir.NORTH_EAST,"dadade", OpTextCopy())
-    val DEMO_SAVE = make("demo/save",HexDir.NORTH_EAST,"qaqqqq", OpDemoSave())
-    val DEMO_PLAY = make("demo/play",HexDir.NORTH_WEST,"edeeee", OpDemoPlay())
+    //val DEMO_SAVE = make("demo/save",HexDir.NORTH_EAST,"qaqqqq", OpDemoSave())
+    //val DEMO_PLAY = make("demo/play",HexDir.NORTH_WEST,"edeeee", OpDemoPlay())
 
     private fun make(name: String, startDir: HexDir, signature: String, action: Action) =
         make(name, startDir, signature) { action }

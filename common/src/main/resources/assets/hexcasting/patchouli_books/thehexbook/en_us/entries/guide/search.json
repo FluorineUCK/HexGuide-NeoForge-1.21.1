@@ -1,8 +1,8 @@
 {
   "name": "hexguide.entry.search",
-  "category": "hexcasting:basics",
+  "category": "hexcasting:guide",
   "icon": "minecraft:compass",
-  "sortnum": 999,
+  "sortnum": 0,
   "advancement": "hexcasting:root",
   "read_by_default": true,
   "pages": [
