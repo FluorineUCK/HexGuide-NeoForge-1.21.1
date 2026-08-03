@@ -1,0 +1,16 @@
+{
+  "name": "hexguide.entry.guide.actions",
+  "category": "hexcasting:guide",
+  "icon": "minecraft:stone",
+  "sortnum": 2,
+  "advancement": "hexcasting:root",
+  "read_by_default": true,
+  "pages": [
+    "hexguide.page.guide.actions.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.actions.1"
+    },
+    "hexguide.page.guide.actions.2"
+  ]
+}

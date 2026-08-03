@@ -22,7 +22,9 @@
     entry: {
       search: "搜索手册",
       guide: {
-        iotas: "Iotas"
+        stack: "栈，咒术网格与施法环境",
+        iotas: "Iotas",
+        actions: "图案、操作与法术"
       }
     },
 
@@ -35,6 +37,11 @@
           "0":"咒法学是利用媒质，操作Iota，进而操作客观世界，改写现实的一门技术。Iota是世间万物的“名字”，我们利用图案获取Iota，转换Iota的类型，对Iota进行运算，或者执行Iota，都是为了从自然那获取我们想要得到的信息(Iota)。进而将这些信息按照正确的形式提供给图案，来实现我们想要的效果。多种图案组合，便可以创造出如艺术般的强大法术。",
           "1": "Iota的种类繁多，常见的有向量Iota iota:hexguide:vec0.json，数字Iota iota:double0.json，实体Iota，图案Iota，布尔值iota:bool0.json以及列表Iota iota:list0.json等。这些Iota因其类型不同，也就有着不同的意义，譬如向量Iota通常用来表示位置、朝向、速度，而数字Iota则表示数字，最为特别的是图案Iota，它代表一个也许可以作为咒术执行的图案，而图案所组成的列表，往往意味着有一整串有意义的图案所组成的咒术。比如 iota:list0.json",
           "2": "除了以上提到的这几种，像是垃圾Iota iota:garbage.json，以及iota:null.json也是常见的Iota"
+        },
+        actions: {
+          "0": "咒法师操作Iota，进而操纵客观世界。用来操纵，增殖，消耗，转化Iota，进而改写现实的工具便是本文中所谓的“操作”。一般说来，大部分的$(thing)“操作”$()都对应一个有意义的$(thing)图案$()，在咒术网格中绘制这些图案，我们便可以执行相对应的操作。如果这些操作实际上并不能被执行，那么便会遇到$(thing)事故$()。那么我们就可以明白，图案并不总是对应着操作，所以存在没有意义的图案，如果你绘制它们，你就会遇到事故。",
+          "1": "同样的，也不是所有能被做出的操作都有图案与之对应，但在这里暂不细叙。接下来便是法术，狭义上讲，所谓的$(thing)法术$()是专指这本笔记中法术一节中提到的那一系列对世界产生影响的图案，比如$(l:hexcasting:patterns/spells/basic#hexcasting:explode)爆炸$(),大多数的法术只消耗Iota，并不做其他对Iota的复杂操作，同时消耗或多或少的媒质。广义上讲，咒法师会将经过精心编撰的图案列表也称之为“法术”或咒术。了解和区分这些概念，对于咒法学的学习与掌握是很重要的。",
+          "2": "那么施法的要义也就显而易见了：用$(l:hexcasting:patterns/basics#hexcasting:get_caster)意识之精思$()、$(l:hexcasting:patterns/basics#hexcasting:raycast)弓箭手之馏化$()这类图案从世界中获取Iota，用弄臣之策略、双子之分解这些$(l:hexcasting:patterns/stackmanip)栈操作$()图案让Iota在栈内的顺序、数量和种类符合法术的需要，然后执行法术图案。这就是施法的基本方法。"
         }
       }
     },

@@ -1,5 +1,6 @@
 package cn.xm1221.HexGuide.compat.inline;
 
+import at.petrak.hexcasting.common.lib.hex.HexIotaTypes;
 import cn.xm1221.HexGuide.HexGuide;
 import at.petrak.hexcasting.api.casting.iota.Iota;
 import at.petrak.hexcasting.api.casting.iota.IotaType;
@@ -156,7 +157,7 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
             Files.createDirectories(dir);
 
             // 短名 hash.json；若已存在同名文件，追加 -1、-2...
-            String name = hash;
+            String name = HexIotaTypes.REGISTRY.getKey(iota.getType())+ hash;
             Path file = dir.resolve(name + ".json");
             int counter = 0;
             while (Files.exists(file) && counter < 100) {
