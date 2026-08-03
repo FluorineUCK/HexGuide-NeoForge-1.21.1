@@ -21,7 +21,8 @@
     entry: {
       search: "Book Search",
       guide: {
-        iotas: "Iotas"
+        iotas: "Iotas",
+        spellcasting: "Practice Spellcasting",
       }
     },
 

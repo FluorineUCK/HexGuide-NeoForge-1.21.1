@@ -14,6 +14,15 @@
     {
       "type": "hexguide:component_text",
       "text": "hexguide.page.guide.stack.2"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.stack.3"
+    },
+    {
+      "type": "hexguide:spellcasting",
+      "hex_size": 8,
+      "anchor": "hexguide:spellcasting"
     }
   ]
 }
