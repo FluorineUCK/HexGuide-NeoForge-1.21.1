@@ -1,0 +1,19 @@
+{
+  "name": "hexguide.entry.guide.foreach",
+  "category": "hexcasting:guide",
+  "icon": "minecraft:golden_pickaxes",
+  "sortnum": 3,
+  "advancement": "hexcasting:root",
+  "read_by_default": true,
+  "pages": [
+    "hexguide.page.guide.foreach.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.foreach.1"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.foreach.2"
+    }
+  ]
+}
