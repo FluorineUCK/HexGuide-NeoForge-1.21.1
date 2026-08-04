@@ -13,12 +13,10 @@ object HexGuideActions : HexGuideRegistrar<ActionRegistryEntry>(
     HexRegistries.ACTION,
     { HexActions.REGISTRY },
 ) {
-    //val CONGRATULATE = make("congratulate", HexDir.WEST, "eed", OpCongratulate)
-
-    //val GREAT_CONGRATULATE = make("congratulate/great", HexDir.EAST, "qwwqqqwwqwded", OpCongratulate)
+    // 注意：此前注册过 congratulate/great（卓越法术）并 datagen 生成了
+    // data/hexcasting/tags/*/requires_enlightenment.json 等 tag 文件，残留文件会污染 HexMod 的 tag。
+    // 该 action 已弃用，tag 残留文件也已在 fabric/forge 的 src/generated/resources 中删除。
     val COPY = make("copy",HexDir.NORTH_EAST,"dadade", OpTextCopy())
-    //val DEMO_SAVE = make("demo/save",HexDir.NORTH_EAST,"qaqqqq", OpDemoSave())
-    //val DEMO_PLAY = make("demo/play",HexDir.NORTH_WEST,"edeeee", OpDemoPlay())
 
     private fun make(name: String, startDir: HexDir, signature: String, action: Action) =
         make(name, startDir, signature) { action }
