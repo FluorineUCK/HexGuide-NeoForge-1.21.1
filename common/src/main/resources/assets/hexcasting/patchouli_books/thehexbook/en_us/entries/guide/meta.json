@@ -1,7 +1,7 @@
 {
   "name": "hexguide.entry.guide.meta",
   "category": "hexcasting:guide",
-  "icon": "minecraft:iron_pickaxes",
+  "icon": "minecraft:iron_pickaxe",
   "sortnum": 3,
   "advancement": "hexcasting:root",
   "read_by_default": true,
@@ -14,6 +14,10 @@
     {
       "type": "hexguide:component_text",
       "text": "hexguide.page.guide.meta.2"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.meta.3"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "name": "hexguide.entry.guide.foreach",
   "category": "hexcasting:guide",
-  "icon": "minecraft:golden_pickaxes",
+  "icon": "minecraft:golden_pickaxe",
   "sortnum": 3,
   "advancement": "hexcasting:root",
   "read_by_default": true,
@@ -14,6 +14,11 @@
     {
       "type": "hexguide:component_text",
       "text": "hexguide.page.guide.foreach.2"
+    },
+    {
+      "type": "hexguide:spellcasting",
+      "hex_size": 8,
+      "anchor": "hexguide:spellcasting"
     }
   ]
 }
