@@ -6,6 +6,8 @@ import at.petrak.hexcasting.api.casting.iota.IotaType
 import at.petrak.hexcasting.api.casting.iota.PatternIota
 import at.petrak.hexcasting.api.casting.math.HexDir
 import at.petrak.hexcasting.api.casting.math.HexPattern
+import at.petrak.hexcasting.api.mod.HexTags
+import at.petrak.hexcasting.common.lib.hex.HexActions
 import at.petrak.hexcasting.xplat.IXplatAbstractions
 import dev.architectury.networking.NetworkManager.PacketContext
 import cn.xm1221.HexGuide.networking.msg.*
@@ -66,6 +68,23 @@ fun HexGuideMessageC2S.applyOnServer(ctx: PacketContext) = ctx.queue {
             } catch (e: Exception) {
                 MsgBookLoadSpellplayS2C(ns, name, null).sendToPlayer(player)
             }
+        }
+
+        // 返回创造标签页应排除的图案 id（服务端 tag 数据完整；客户端 Forge 静态 registry 查不到 tag）
+        is MsgRequestExcludedPatternsC2S -> {
+            val player = ctx.player as? ServerPlayer ?: return@queue
+            // 用 registry.getTag 而非 getHolder(key).is(tag)：getHolder 会创建 STAND_ALONE holder，
+            // 而 bindTags 跳过 STAND_ALONE，导致 holder 无 tag 且污染注册表
+            val greatTag = HexActions.REGISTRY.getTag(HexTags.Actions.REQUIRES_ENLIGHTENMENT)
+            val perWorldTag = HexActions.REGISTRY.getTag(HexTags.Actions.PER_WORLD_PATTERN)
+            val excluded = HexActions.REGISTRY.entrySet()
+                .filter { (key, _) ->
+                    val inGreat = greatTag.isPresent && greatTag.get().stream().anyMatch { it.`is`(key) }
+                    val inPerWorld = perWorldTag.isPresent && perWorldTag.get().stream().anyMatch { it.`is`(key) }
+                    inGreat || inPerWorld
+                }
+                .map { (key, _) -> key.location().toString() }
+            MsgExcludedPatternsS2C(excluded).sendToPlayer(player)
         }
 
         else -> {}

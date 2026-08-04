@@ -26,6 +26,7 @@ object HexGuide {
         )
         HexGuideNetworking.init()
         InlineHexGuide.init()
+        HexGuideTagFixer.init() // 互联时把 Fabric 路径的 hexcasting:action tag 补全
         //HexGuideCreativeTab.register()
     }
 

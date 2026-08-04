@@ -3,6 +3,7 @@ package cn.xm1221.HexGuide.networking.handler
 import cn.xm1221.HexGuide.config.HexGuideServerConfig
 import cn.xm1221.HexGuide.networking.msg.*
 import cn.xm1221.HexGuide.patchouli.SpellcastDemoPage
+import cn.xm1221.HexGuide.registry.HexGuideCreativeTab
 import dev.architectury.networking.NetworkManager.PacketContext
 import net.minecraft.client.Minecraft
 
@@ -23,6 +24,13 @@ fun HexGuideMessageS2C.applyOnClient(ctx: PacketContext) = ctx.queue {
                 for (page in SpellcastDemoPage.ACTIVE) {
                     if (page.matches(ns, name)) page.onSpellplayLoaded(json)
                 }
+            }
+        }
+
+        // 创造标签页排除列表（服务端 tag 完整）
+        is MsgExcludedPatternsS2C -> {
+            Minecraft.getInstance().execute {
+                HexGuideCreativeTab.setExcludedPatterns(ids.toSet())
             }
         }
     }

@@ -1,0 +1,12 @@
+{
+  "name": "hexguide.entry.casting.hexguide",
+  "category": "hexcasting:casting",
+  "icon": "hexcasting:textures/item/patchouli_book.png",
+  "sortnum": 9,
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.casting.into",
+    "hexguide.page.casting.hexguide"
+  ]
+}
