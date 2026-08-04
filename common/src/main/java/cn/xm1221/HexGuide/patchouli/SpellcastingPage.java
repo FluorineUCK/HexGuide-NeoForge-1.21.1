@@ -75,7 +75,9 @@ public class SpellcastingPage extends BookPage {
         if (spellcasting == null) {
             spellcasting = new GuiSpellcasting(InteractionHand.MAIN_HAND, new ArrayList<>(), List.of(), null, 1);
             // 公共 Screen.init 设置 minecraft/width/height（会触发 GuiSpellcasting.init 的环境音效，随后停掉）
-            spellcasting.init(Minecraft.getInstance(), parent.width, parent.height);
+            // 不用 parent.width/height（经 Patchouli 继承的 MC Screen 字段，发布 remap 后不一致），改用窗口 GUI 尺寸
+            var win = Minecraft.getInstance().getWindow();
+            spellcasting.init(Minecraft.getInstance(), win.getGuiScaledWidth(), win.getGuiScaledHeight());
             Minecraft.getInstance().getSoundManager().stop(HexSounds.CASTING_AMBIANCE.getLocation(), null);
 
             BookSpellcastingAccess access = as(spellcasting);

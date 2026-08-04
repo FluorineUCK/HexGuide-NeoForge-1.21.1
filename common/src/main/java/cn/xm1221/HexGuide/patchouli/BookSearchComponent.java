@@ -187,6 +187,7 @@ public class BookSearchComponent implements ICustomComponent {
     private static void focusScreenOn(GuiEventListener w) {
         var s = Minecraft.getInstance().screen;
         if (s == null) return;
-        try { Screen.class.getMethod("setFocused", GuiEventListener.class).invoke(s, w); } catch (Exception ig) {}
+        // common 用官方 Mojmap 编译：直接调用，发布时 Architectury 自动 remap（Forge→m_7522_ 等）
+        s.setFocused(w);
     }
 }
