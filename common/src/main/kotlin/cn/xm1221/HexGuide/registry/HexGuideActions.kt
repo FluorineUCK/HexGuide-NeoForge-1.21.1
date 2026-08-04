@@ -6,8 +6,6 @@ import at.petrak.hexcasting.api.casting.math.HexDir
 import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.common.lib.HexRegistries
 import at.petrak.hexcasting.common.lib.hex.HexActions
-import cn.xm1221.HexGuide.casting.actions.OpDemoPlay
-import cn.xm1221.HexGuide.casting.actions.OpDemoSave
 import cn.xm1221.HexGuide.casting.actions.OpTextCopy
 
 

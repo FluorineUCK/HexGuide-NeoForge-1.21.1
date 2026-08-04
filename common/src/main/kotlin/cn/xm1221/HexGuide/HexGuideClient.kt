@@ -4,6 +4,7 @@ import cn.xm1221.HexGuide.compat.inline.IotaInlineRender
 import cn.xm1221.HexGuide.compat.inline.IotaMatcher
 import cn.xm1221.HexGuide.config.HexGuideClientConfig
 import cn.xm1221.HexGuide.patchouli.PageComponentText
+import cn.xm1221.HexGuide.patchouli.SpellcastDemoPage
 import cn.xm1221.HexGuide.patchouli.SpellcastingPage
 import cn.xm1221.HexGuide.scrying.ScryingBookOverlay
 import com.samsthenerd.inline.api.client.InlineClientAPI
@@ -25,6 +26,9 @@ object HexGuideClient {
         // hexguide:spellcasting —— 页面内嵌可交互法阵绘制区
         ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation("hexguide", "spellcasting")] =
             SpellcastingPage::class.java
+        // hexguide:spellcast_demo —— 手册内演示图案绘制与栈变化
+        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation("hexguide", "spellcast_demo")] =
+            SpellcastDemoPage::class.java
     }
 
     fun getConfigScreen(parent: Screen): Screen {

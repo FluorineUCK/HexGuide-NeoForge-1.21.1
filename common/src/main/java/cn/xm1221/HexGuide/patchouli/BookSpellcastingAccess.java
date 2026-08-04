@@ -1,5 +1,6 @@
 package cn.xm1221.HexGuide.patchouli;
 
+import at.petrak.hexcasting.api.casting.math.HexCoord;
 import at.petrak.hexcasting.api.casting.math.HexPattern;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec2;
@@ -21,6 +22,13 @@ public interface BookSpellcastingAccess {
     void setWriteMode$hexguide(boolean write);
     void clearPatterns$hexguide();
     void setStackClear$hexguide();
+    void demoAddPattern$hexguide(HexPattern pattern, HexCoord origin, int color);
+    void demoClearCanvas$hexguide();
+    void demoColor$hexguide(int index, int color);
+    void demoPushIota$hexguide(CompoundTag iotaNbt);
+    void demoPeek$hexguide(int userIndex);
+    CompoundTag demoGetImageNbt$hexguide();
+    void demoSetImageNbt$hexguide(CompoundTag imageNbt);
     int patternCount$hexguide();
     HexPattern getPattern$hexguide(int index);
     List<CompoundTag> getStack$hexguide();

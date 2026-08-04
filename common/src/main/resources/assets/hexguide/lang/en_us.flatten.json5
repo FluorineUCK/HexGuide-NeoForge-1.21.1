@@ -23,6 +23,7 @@
       guide: {
         iotas: "Iotas",
         spellcasting: "Practice Spellcasting",
+        demo: "Spellcasting Demo",
       }
     },
 
@@ -30,6 +31,11 @@
       search: {
         "0": "Below is a text search box for the contents and entries of The HexBook. Simply type in a name, keyword, or natural language description to find relevant entries. Click any result to jump directly to that page.",
       },
+      guide: {
+        demo: {
+          "0": "This page demonstrates pattern drawing and the stack. Patterns appear on the grid one by one, and each drawn pattern is pushed onto the stack as a Pattern Iota shown in the top-left box. Use the buttons to pause or restart the demonstration."
+        }
+      }
     },
 
     book: {

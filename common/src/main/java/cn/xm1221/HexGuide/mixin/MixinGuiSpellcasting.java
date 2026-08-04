@@ -13,16 +13,23 @@ import at.petrak.hexcasting.xplat.IClientXplatAbstractions;
 import cn.xm1221.HexGuide.patchouli.BookSpellcastingAccess;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec2;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,6 +55,8 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
     @Unique private Vec2 coordsOffsetOverride$hexguide;
     // 写模式记录的、尚未推送到法杖栈的图案（切到施法模式时补发，不执行）
     @Unique private List<CompoundTag> pendingSync$hexguide = new ArrayList<>();
+    // 演示页面：图案下标 → 自定义颜色（ARGB）
+    @Unique private Map<Integer, Integer> demoColors$hexguide = new HashMap<>();
 
     @WrapWithCondition(
         method = "drawEnd",
@@ -109,9 +118,108 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
      * 切到施法模式时调用：把尚未同步到服务端的本地图案补发（MsgNewSpellPatternC2S），
      * 让服务端施法 VM 从与本地相同的栈继续执行——本地栈与施法栈是同一个。
      */
+    /**
+     * 演示页面：把图案加入网格（带可选自定义颜色），不触碰本地栈。
+     * origin 为该图案的网格锚点（各图案错开摆放避免重叠）；color = ARGB，-1 表示用默认类型色。
+     */
+    @Override public void demoAddPattern$hexguide(HexPattern pat, HexCoord origin, int color) {
+        int idx = patterns.size();
+        patterns.add(new ResolvedPattern(pat, origin, ResolvedPatternType.EVALUATED));
+        usedSpots.addAll(pat.positions(origin));
+        if (color != -1) {
+            demoColors$hexguide.put(idx, color);
+        }
+        this.calculateIotaDisplays();
+    }
+
+    /** 演示页面：清空画布（网格 + usedSpots + 颜色覆盖），不清空本地栈 */
+    @Override public void demoClearCanvas$hexguide() {
+        patterns.clear();
+        usedSpots.clear();
+        demoColors$hexguide.clear();
+        this.calculateIotaDisplays();
+    }
+
+    /** 演示页面：给指定下标的图案设置自定义颜色（如执行 ERRORED 染红） */
+    @Override public void demoColor$hexguide(int index, int color) {
+        demoColors$hexguide.put(index, color);
+    }
+
+    /** 演示页面"入栈"步骤：把配置的自定义 iota 压入本地栈 */
+    @Override public void demoPushIota$hexguide(CompoundTag iotaNbt) {
+        List<CompoundTag> newStack = new ArrayList<>(cachedStack);
+        newStack.add(iotaNbt);
+        cachedStack = newStack;
+        this.calculateIotaDisplays();
+    }
+
+    /**
+     * 演示页面"peek"步骤：移除本地栈指定位置的 iota。
+     * 用户下标以栈顶为 0（栈顶 = cachedStack 末尾）；越界时忽略（限界保护）。
+     */
+    @Override public void demoPeek$hexguide(int userIndex) {
+        int size = cachedStack.size();
+        int realIndex = size - 1 - userIndex; // 栈顶(用户0) = cachedStack 最后
+        if (realIndex < 0 || realIndex >= size) return; // 越界保护
+        List<CompoundTag> newStack = new ArrayList<>(cachedStack);
+        newStack.remove(realIndex);
+        cachedStack = newStack;
+        this.calculateIotaDisplays();
+    }
+
+    /** 上传用：把本地栈打包成 CastingImage 的 NBT（服务端 loadFromNbt 后运行） */
+    @Override public CompoundTag demoGetImageNbt$hexguide() {
+        CompoundTag tag = new CompoundTag();
+        ListTag list = new ListTag();
+        for (CompoundTag c : cachedStack) list.add(c);
+        tag.put("stack", list);
+        tag.putInt("open_parens", 0);
+        tag.putBoolean("escape_next", false);
+        tag.putInt("ops_consumed", 0);
+        tag.put("parenthesized", new CompoundTag());
+        tag.put("userdata", new CompoundTag());
+        return tag;
+    }
+
+    /** 执行结果：用返回的 CastingImage 更新本地栈显示（栈 = 结果的 stack） */
+    @Override public void demoSetImageNbt$hexguide(CompoundTag imageNbt) {
+        List<CompoundTag> newStack = new ArrayList<>();
+        ListTag list = imageNbt.getList("stack", Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            newStack.add(list.getCompound(i));
+        }
+        cachedStack = newStack;
+        this.calculateIotaDisplays();
+    }
+
     @Override public int patternCount$hexguide() { return patterns.size(); }
     @Override public HexPattern getPattern$hexguide(int index) { return patterns.get(index).getPattern(); }
     @Override public List<CompoundTag> getStack$hexguide() { return cachedStack; }
+
+    /**
+     * 渲染时按图案下标替换自定义颜色。drawPatternFromPoints 的最后参数 seed 即网格循环的 idx。
+     * WIP 图案的 seed = patterns.size()，不在覆盖表内，不受影响。
+     */
+    @WrapOperation(
+        method = "render",
+        at = @At(value = "INVOKE",
+            target = "Lat/petrak/hexcasting/client/render/RenderLib;drawPatternFromPoints(Lorg/joml/Matrix4f;Ljava/util/List;Ljava/util/Set;ZIIFFFD)V",
+            remap = false),
+        remap = false
+    )
+    private void wrapDemoColor$hexguide(Matrix4f mat, List<Vec2> points, Set<Integer> dupIndices,
+                                        boolean drawLast, int tail, int head, float flowIrregular,
+                                        float readabilityOffset, float lastSegmentLen, double seed,
+                                        Operation<Void> original) {
+        int idx = (int) Math.round(seed);
+        Integer col = demoColors$hexguide.get(idx);
+        if (col != null) {
+            tail = col.intValue();
+            head = col.intValue();
+        }
+        original.call(mat, points, dupIndices, drawLast, tail, head, flowIrregular, readabilityOffset,
+            lastSegmentLen, seed);
+    }
 
     /** 取走待同步到法杖栈的写模式记录（并清空） */
     @Override public List<CompoundTag> takePendingSync$hexguide() {
