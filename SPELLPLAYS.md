@@ -110,16 +110,17 @@ HexGuide hooks into [Inline](https://modrinth.com/mod/inline)'s font renderer: t
 | `iota:<a85>` | `iota:<压缩编码>` | 内联编码（NBT→deflate→Ascii85），短 |
 | `iota:<ns>:<name>.json` | `iota:hexguide:vec0.json` | 从 `assets/<ns>/iotas/` 或游戏目录加载 |
 | `iota:<name>.json` | `iota:vec0.json` | 短引用（默认 ns = hexguide） |
+| `iota:[<元素>,...]` | `iota:[double:1, vec:{2,3,4}]` | ListIota（便携输入，可嵌套） |
 | `double:<数字>` | `double:3.14` | DoubleIota（便携输入） |
 | `vec:{a,b,c}` | `vec:{1,2,3}` | Vec3Iota（便携输入） |
 | `pattern:<action id>` | `pattern:hexcasting:empty_list` | 已注册图案 → PatternIota |
-| `pattern[<朝向>,<笔顺>]` | `pattern[NORTH_EAST,qqaeaae]` | 直接解析 → PatternIota |
+| `pattern{<朝向>,<笔顺>}` | `pattern{NORTH_EAST,qqaeaae}` | 直接解析 → PatternIota（花括号：避免在 `iota:[...]` 列表内与外层 `[` 冲突） |
 | `null` | `null` | NullIota |
 | `""` | `""` | **不入栈任何东西** |
 
-> 上述格式同样可用于演示配置的 `push` 字段（字符串形式）。
+> 上述格式同样可用于演示配置的 `push` 字段（字符串形式）。`iota:[...]` 的元素可递归使用本表任意形式（含嵌套 `iota:[...]`）；逗号分割按括号深度进行，`vec:{...}` / `pattern{...}` 内部的逗号不会误分割。
 
-> These formats also apply to the demo config's `push` field (string form).
+> These formats also apply to the demo config's `push` field (string form). Elements of `iota:[...]` may recursively use any form above (including nested `iota:[...]`); splitting is bracket-depth aware, so commas inside `vec:{...}` / `pattern{...}` are safe.
 
 ### 2.2 自动保存 / Auto-save (OpTextCopy)
 

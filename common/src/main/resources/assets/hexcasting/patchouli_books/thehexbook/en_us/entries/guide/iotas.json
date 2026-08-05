@@ -4,7 +4,7 @@
   "icon": "hexcasting:focus",
   "sortnum": 1,
   "advancement": "hexcasting:root",
-  "read_by_default": true,
+  "read_by_default": false,
   "pages": [
     "hexguide.page.guide.iotas.0",
     {

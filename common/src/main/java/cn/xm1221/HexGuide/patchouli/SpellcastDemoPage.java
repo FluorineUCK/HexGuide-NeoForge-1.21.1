@@ -4,6 +4,7 @@ import at.petrak.hexcasting.api.casting.ActionRegistryEntry;
 import at.petrak.hexcasting.api.casting.iota.DoubleIota;
 import at.petrak.hexcasting.api.casting.iota.Iota;
 import at.petrak.hexcasting.api.casting.iota.IotaType;
+import at.petrak.hexcasting.api.casting.iota.ListIota;
 import at.petrak.hexcasting.api.casting.iota.NullIota;
 import at.petrak.hexcasting.api.casting.iota.PatternIota;
 import at.petrak.hexcasting.api.casting.iota.Vec3Iota;
@@ -280,13 +281,34 @@ public class SpellcastDemoPage extends BookPage {
                 ActionRegistryEntry entry = HexActions.REGISTRY.get(new ResourceLocation(s.substring(8).trim()));
                 if (entry != null) return IotaType.serialize(new PatternIota(entry.prototype()));
             }
-            if (s.startsWith("pattern[")) {
-                // "pattern[<朝向>,<笔顺>]" → 直接解析图案的 PatternIota；"pattern[" 是 8 字符
+            if (s.startsWith("pattern{")) {
+                // "pattern{<朝向>,<笔顺>}" → 直接解析图案的 PatternIota；"pattern{" 是 8 字符
+                // 用花括号而非方括号：避免在 iota:[...] 列表内与外层 [ 冲突
                 String inner = s.substring(8, s.length() - 1);
                 String[] parts = inner.split(",");
                 HexDir dir = HexDir.valueOf(parts[0].trim().toUpperCase());
                 HexPattern pat = HexPattern.fromAngles(parts[1].trim(), dir);
                 return IotaType.serialize(new PatternIota(pat));
+            }
+            if (s.startsWith("pattern[")) {
+                // 旧语法兼容（列表外仍可用）："pattern[<朝向>,<笔顺>]"；"pattern[" 是 8 字符
+                String inner = s.substring(8, s.length() - 1);
+                String[] parts = inner.split(",");
+                HexDir dir = HexDir.valueOf(parts[0].trim().toUpperCase());
+                HexPattern pat = HexPattern.fromAngles(parts[1].trim(), dir);
+                return IotaType.serialize(new PatternIota(pat));
+            }
+            if (s.startsWith("iota:[")) {
+                // "iota:[<元素>,...]" → ListIota 便携输入；"iota:[" 是 6 字符
+                String inner = s.substring(6, s.length() - 1);
+                List<Iota> elems = new ArrayList<>();
+                for (String part : splitTopLevel(inner)) {
+                    if (part.isEmpty()) continue;
+                    CompoundTag t = resolveIotaString(part);
+                    if (t == null) return null; // 任一元素解析失败 → 整个失败
+                    elems.add(IotaType.deserialize(t, null));
+                }
+                return IotaType.serialize(new ListIota(elems));
             }
             if (s.startsWith("iota:")) {
                 IotaInlineData data = IotaInlineData.parse(s.substring(5));
@@ -297,6 +319,33 @@ public class SpellcastDemoPage extends BookPage {
             }
         } catch (Exception ignored) {}
         return null;
+    }
+
+    /**
+     * 按括号深度分割顶层逗号：避免 vec:{1,2,3} / pattern{...} / 嵌套 iota:[...]
+     * 内部的逗号被误分割。三类括号全部跟踪：
+     * - {} / ()：元素内部的分组符（vec、pattern）
+     * - []：专属列表定界符（iota:[...] 嵌套列表）
+     * 元素内部不含方括号（pattern 已用 {}），故 [] 可安全跟踪，支持嵌套列表。
+     * 例：splitTopLevel("double:1, iota:[double:2, double:3], null")
+     *   → ["double:1", "iota:[double:2, double:3]", "null"]
+     */
+    private static List<String> splitTopLevel(String s) {
+        List<String> out = new ArrayList<>();
+        int depth = 0;
+        StringBuilder cur = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (c == '{' || c == '[' || c == '(') depth++;
+            else if (c == '}' || c == ']' || c == ')') depth--;
+            if (c == ',' && depth == 0) {
+                out.add(cur.toString().trim());
+                cur.setLength(0);
+            } else {
+                cur.append(c);
+            }
+        }
+        if (cur.length() > 0) out.add(cur.toString().trim());
+        return out;
     }
 
     /** 解析颜色：支持 "#rrggbb" / "0xrrggbb" / 十进制 */
@@ -393,8 +442,15 @@ public class SpellcastDemoPage extends BookPage {
         nextStep++;
     }
 
-    /** peek：移除本地栈指定位置的 iota（栈顶为下标 0），支持单个或多个下标，越界忽略 */
+    /** peek：可选先绘制图案（配置了 pattern/action 则画，表示取走操作），再移除本地栈指定位置的 iota（栈顶为下标 0），越界忽略 */
     private void doPeek(BookSpellcastingAccess access, Step step) {
+        // 有图案先绘制（像 push 一样可视化；无图案则只操作栈）
+        if (!step.sig.isEmpty() || !step.action.isEmpty()) {
+            try {
+                HexPattern pat = resolveDisplayPattern(step);
+                addPatternToGrid(access, step, pat);
+            } catch (Exception ignored) {}
+        }
         if (step.peekIndices != null && !step.peekIndices.isEmpty()) {
             // 多个：按下标从高到低移除（避免前一个移除影响后续下标）
             List<Integer> sorted = new ArrayList<>(step.peekIndices);
@@ -460,19 +516,26 @@ public class SpellcastDemoPage extends BookPage {
      * - 未播放（暂停/未开始/播完）→ 配置文件的全局大标题
      * - 播放中 → 当前步骤标题：配置的 title；未配置则用 action 的本地化名称（hexcasting.action.&lt;id&gt;），
      *   翻译键不存在或无 action 时不显示
+     * title / demoTitle 支持语言键：若是对应语言文件里的键则翻译，否则原样显示。
      */
     private String currentTitle() {
         // 图案维持显示时才显示标题：播放中显示刚执行步骤的标题；未播放（暂停/未开始/播完）显示大标题
         if (!playing || steps.isEmpty() || nextStep == 0) {
-            return demoTitle;
+            return i18nTitle(demoTitle);
         }
         Step s = steps.get(nextStep - 1);
-        if (!s.title.isEmpty()) return s.title;
+        if (!s.title.isEmpty()) return i18nTitle(s.title);
         if (!s.action.isEmpty()) {
             String key = "hexcasting.action." + s.action;
             if (I18n.exists(key)) return I18n.get(key);
         }
         return "";
+    }
+
+    /** 标题文本：若是对应语言键则本地化，否则原样 */
+    private static String i18nTitle(String t) {
+        if (t.isEmpty()) return t;
+        return I18n.exists(t) ? I18n.get(t) : t;
     }
 
     /** 服务端执行结果：更新本地栈显示；ERRORED 且未自定义颜色时把图案染红 */

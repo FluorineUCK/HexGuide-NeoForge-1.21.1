@@ -4,7 +4,7 @@
   "icon": "minecraft:golden_pickaxe",
   "sortnum": 3,
   "advancement": "hexcasting:root",
-  "read_by_default": true,
+  "read_by_default": false,
   "pages": [
     "hexguide.page.guide.foreach.0",
     {
