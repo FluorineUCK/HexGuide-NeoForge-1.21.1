@@ -57,12 +57,18 @@ object HexGuideServerConfig {
         var dummyServerConfigOption: Int = 64
             private set
 
+        /** 互联 tag 修复（Fabric 路径 → hexcasting:action 注册表），默认开启 */
+        @Tooltip
+        var fixTags: Boolean = true
+
         fun encode(buf: FriendlyByteBuf) {
             buf.writeInt(dummyServerConfigOption)
+            buf.writeBoolean(fixTags)
         }
 
         fun decode(buf: FriendlyByteBuf): ServerConfig {
             dummyServerConfigOption = buf.readInt()
+            fixTags = buf.readBoolean()
             return this
         }
     }

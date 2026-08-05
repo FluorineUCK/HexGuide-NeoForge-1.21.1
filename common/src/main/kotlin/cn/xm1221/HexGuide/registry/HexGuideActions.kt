@@ -6,6 +6,7 @@ import at.petrak.hexcasting.api.casting.math.HexDir
 import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.common.lib.HexRegistries
 import at.petrak.hexcasting.common.lib.hex.HexActions
+import cn.xm1221.HexGuide.casting.actions.OpDemoSave
 import cn.xm1221.HexGuide.casting.actions.OpTextCopy
 
 
@@ -17,6 +18,7 @@ object HexGuideActions : HexGuideRegistrar<ActionRegistryEntry>(
     // data/hexcasting/tags/*/requires_enlightenment.json 等 tag 文件，残留文件会污染 HexMod 的 tag。
     // 该 action 已弃用，tag 残留文件也已在 fabric/forge 的 src/generated/resources 中删除。
     val COPY = make("copy",HexDir.NORTH_EAST,"dadade", OpTextCopy())
+    val DEMO = make("demo",HexDir.NORTH_EAST,"aqqqadeeed", OpDemoSave())
 
     private fun make(name: String, startDir: HexDir, signature: String, action: Action) =
         make(name, startDir, signature) { action }

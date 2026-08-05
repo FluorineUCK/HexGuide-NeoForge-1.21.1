@@ -99,6 +99,11 @@
             "": "Dummy Server Config Option",
             "@Tooltip": "This is an example of a server-side config option that accepts an integer.",
           },
+
+          fixTags: {
+            "": "Interop Tag Fix",
+            "@Tooltip": "Copy Fabric-path action tags (data/<ns>/tags/action/) into the hexcasting:action registry at server start. Fixes lost tags from Fabric addons under Connector. Default on.",
+          },
         },
       },
     },

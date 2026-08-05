@@ -1,0 +1,22 @@
+{"interval":30,
+  "clear_before":true,
+  "start_dir":"NORTH_EAST",
+  "steps":[
+    {"type":"execute","pattern":"qaq","start_dir":"NORTH_EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"aa","start_dir":"EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"qaq","start_dir":"NORTH_EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"wa","start_dir":"NORTH_EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"wqaawdd","start_dir":"EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"aadaa","start_dir":"EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"d","start_dir":"EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"ad","start_dir":"WEST","origin":[-1,2]},
+    {"type":"execute","pattern":"qqq","start_dir":"WEST","origin":[-1,2]},
+    {"type":"execute","pattern":"a","start_dir":"SOUTH_EAST","origin":[-1,2],"color": "#ffd93d"},
+    {"type":"execute","pattern":"eee","start_dir":"EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"qqq","start_dir":"WEST","origin":[-1,2]},
+    {"type":"execute","pattern":"qaqqqqq","start_dir":"EAST","origin":[-1,2],"color": "#ffd93d"},
+    {"type":"execute","pattern":"eee","start_dir":"EAST","origin":[-1,2]},
+    {"type":"execute","pattern":"awdd","start_dir":"NORTH_WEST","origin":[-1,2]},
+    {"type":"execute","pattern":"deaqq","start_dir":"SOUTH_EAST","origin":[-1,2]}
+  ]
+}

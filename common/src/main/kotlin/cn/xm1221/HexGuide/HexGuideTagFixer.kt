@@ -3,6 +3,7 @@ package cn.xm1221.HexGuide
 import at.petrak.hexcasting.api.casting.ActionRegistryEntry
 import at.petrak.hexcasting.common.lib.HexRegistries
 import at.petrak.hexcasting.common.lib.hex.HexActions
+import cn.xm1221.HexGuide.config.HexGuideServerConfig
 import com.google.gson.JsonParser
 import dev.architectury.event.events.common.LifecycleEvent
 import dev.architectury.platform.Platform
@@ -30,6 +31,11 @@ import java.util.zip.ZipFile
  */
 object HexGuideTagFixer {
     fun init() {
+        // 可在配置文件中关闭（hexguide 配置 → server → fixTags），默认开启
+        if (!HexGuideServerConfig.config.fixTags) {
+            HexGuide.LOGGER.info("[HexGuideTagFixer] 已在配置中关闭 tag 修复")
+            return
+        }
         // 服务器启动完成后触发（此时 TagLoader 已绑定完 tag，我们随后补全 Fabric 路径的）
         LifecycleEvent.SERVER_STARTED.register { server ->
             fixTags(server.getResourceManager())
