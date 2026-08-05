@@ -144,6 +144,11 @@
             "": "示例服务端选项",
             "@Tooltip": "这是一个接受整数的服务端配置选项示例。",
           },
+
+          fixTags: {
+            "": "互联 Tag 修复",
+            "@Tooltip": "服务器启动时把 Fabric 路径的 action tag（data/<ns>/tags/action/）复制进 hexcasting:action 注册表，修复 Connector 下 Fabric 附属丢失的 tag。默认开启。",
+          },
         },
       },
     },
