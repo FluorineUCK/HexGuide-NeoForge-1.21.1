@@ -578,10 +578,10 @@ public class SpellcastDemoPage extends BookPage {
         advance(pticks);
 
         var font = Minecraft.getInstance().font;
-        // 动态标题（无阴影，手动居中）：图案维持显示时显示步骤标题，未播放显示大标题
+        // 动态标题（手动居中；drawString 默认带阴影，需显式 false）：图案维持显示时显示步骤标题，未播放显示大标题
         String title = currentTitle();
         if (!title.isEmpty()) {
-            graphics.drawString(font, title, CANVAS_W / 2 - font.width(title) / 2, 2, book.textColor);
+            graphics.drawString(font, title, CANVAS_W / 2 - font.width(title) / 2, 2, book.textColor, false);
         }
 
         var pose = graphics.pose();

@@ -173,10 +173,10 @@ public class SpellcastingPage extends BookPage {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float pticks) {
         if (spellcasting == null) return;
 
-        // 页面标题（顶部居中）
+        // 页面标题（顶部居中，无阴影：drawString 默认带阴影，需显式 false）
         var font = Minecraft.getInstance().font;
-        graphics.drawCenteredString(font, i18n("hexguide.entry.guide.spellcasting"),
-            CANVAS_W / 2, 2, book.textColor);
+        String title = i18n("hexguide.entry.guide.spellcasting");
+        graphics.drawString(font, title, CANVAS_W / 2 - font.width(title) / 2, 2, book.textColor, false);
 
         var pose = graphics.pose();
         // drawPage 已 translate(left, top)，外层还有 translate(bookLeft, bookTop)。抵消回屏幕坐标。
