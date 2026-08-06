@@ -1,0 +1,7 @@
+{
+  "name": "hexguide.categories.mods",
+  "description": "hexguide.categories.description0",
+  "icon": "hexcasting:textures/item/cad/3_artifact.png",
+  "parent": "hexcasting:guide",
+  "sortnum": 0
+}

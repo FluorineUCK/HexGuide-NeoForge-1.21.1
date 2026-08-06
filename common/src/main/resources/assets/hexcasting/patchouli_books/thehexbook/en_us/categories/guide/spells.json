@@ -1,0 +1,7 @@
+{
+  "name": "hexguide.categories.spells",
+  "description": "hexguide.categories.description1",
+  "icon": "hexcasting:textures/item/cad/3_trinket.png",
+  "parent": "hexcasting:guide",
+  "sortnum": 1
+}
