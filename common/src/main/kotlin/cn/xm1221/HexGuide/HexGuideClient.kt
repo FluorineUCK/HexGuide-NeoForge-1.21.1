@@ -21,13 +21,13 @@ object HexGuideClient {
         InlineClientAPI.INSTANCE.addRenderer(IotaInlineRender())
 
         // 注册自定义 Patchouli 页面类型 hexguide:component_text
-        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation("hexguide", "component_text")] =
+        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation(HexGuide.MODID, "component_text")] =
             PageComponentText::class.java
         // hexguide:spellcasting —— 页面内嵌可交互法阵绘制区
-        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation("hexguide", "spellcasting")] =
+        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation(HexGuide.MODID, "spellcasting")] =
             SpellcastingPage::class.java
         // hexguide:spellcast_demo —— 手册内演示图案绘制与栈变化
-        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation("hexguide", "spellcast_demo")] =
+        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation(HexGuide.MODID, "spellcast_demo")] =
             SpellcastDemoPage::class.java
     }
 
