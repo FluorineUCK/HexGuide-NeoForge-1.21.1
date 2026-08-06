@@ -1,0 +1,25 @@
+{
+  "name": "hexguide.entry.guide.spells.blocks",
+  "category": "hexcasting:guide/spells",
+  "icon": "minecraft:iron_pickaxe",
+  "sortnum": 0,
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.guide.spells.blocks.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.spells.blocks.1"
+    },
+
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.spells.blocks.2"
+    },
+    {
+      "type": "hexguide:spellcast_demo",
+      "demo": "hexguide:torth",
+      "hex_size": 16
+    }
+  ]
+}

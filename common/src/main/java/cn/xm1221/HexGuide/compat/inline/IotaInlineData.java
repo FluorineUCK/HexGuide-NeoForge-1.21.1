@@ -46,15 +46,21 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
     private final String resourceRef;
     /** 强制渲染颜色（ARGB）；-1 = 继承当前文本样式颜色（trContext.usableColor） */
     private final int forcedColor;
+    /** 强制换行（iota:xxx**n）：显示文本拆成多行逐行向下渲染 */
+    private final boolean wrapNewline;
 
-    public IotaInlineData(String raw) { this(raw, null, -1); }
-    private IotaInlineData(String raw, String ref) { this(raw, ref, -1); }
-    private IotaInlineData(String raw, String ref, int color) {
-        this.raw = raw; this.resourceRef = ref; this.forcedColor = color;
+    public IotaInlineData(String raw) { this(raw, null, -1, false); }
+    private IotaInlineData(String raw, String ref) { this(raw, ref, -1, false); }
+    private IotaInlineData(String raw, String ref, int color) { this(raw, ref, color, false); }
+    private IotaInlineData(String raw, String ref, int color, boolean wrap) {
+        this.raw = raw; this.resourceRef = ref; this.forcedColor = color; this.wrapNewline = wrap;
     }
 
     /** 强制渲染颜色（ARGB），-1 表示继承文本样式 */
     public int getForcedColor() { return forcedColor; }
+
+    /** 是否强制换行显示（**n 后缀） */
+    public boolean isWrapNewline() { return wrapNewline; }
 
     public Iota getOrDeserialize() {
         if (cached == null) {
@@ -98,20 +104,23 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
      * - *b          → 强制黑色
      * - *w          → 强制白色
      * - *RRGGBB     → 强制指定 RGB 颜色（如 *FF0000 红色）
+     * - **n         → 强制换行显示（长文本拆多行；独立成行/行尾场景效果最佳，行中会向下覆盖）
      * - 无后缀      → 继承当前文本样式颜色（trContext.usableColor，书页/tooltip 自适应）
      */
     @org.jetbrains.annotations.Nullable
     public static IotaInlineData parse(String raw) {
+        boolean wrap = raw.endsWith("**n");
+        if (wrap) raw = raw.substring(0, raw.length() - 3); // 剥离 **n（3 字符）
         int forced = parseForcedColor(raw);
         if (forced != -1) raw = stripColorSuffix(raw);
         // 资源引用以 .json 结尾（用 endsWith 而非 contains，避免 Ascii85 编码里碰巧含 ".json" 子串被误判）
         if (raw.endsWith(".json")) {
-            var data = new IotaInlineData(raw, raw, forced);
+            var data = new IotaInlineData(raw, raw, forced, wrap);
             if (data.getOrDeserialize() != null) return data;
             HexGuide.LOGGER.warn("[IotaInlineData] 资源 iota 解析失败: {}", raw);
             return null;
         }
-        return new IotaInlineData(raw, null, forced);
+        return new IotaInlineData(raw, null, forced, wrap);
     }
 
     /** 解析颜色后缀；无后缀返回 -1 */

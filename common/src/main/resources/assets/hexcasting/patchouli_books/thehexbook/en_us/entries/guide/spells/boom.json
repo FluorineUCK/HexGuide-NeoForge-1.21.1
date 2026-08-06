@@ -1,0 +1,16 @@
+{
+  "name": "hexguide.entry.guide.spells.boom",
+  "category": "hexcasting:guide/spells",
+  "icon": "minecraft:grass",
+  "sortnum": 0,
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.guide.spells.boom.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.spells.boom.1"
+    },
+    "hexguide.page.guide.spells.boom.2"
+  ]
+}

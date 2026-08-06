@@ -22,7 +22,7 @@ fun HexGuideMessageS2C.applyOnClient(ctx: PacketContext) = ctx.queue {
         is MsgBookLoadSpellplayS2C -> {
             Minecraft.getInstance().execute {
                 for (page in SpellcastDemoPage.ACTIVE) {
-                    if (page.matches(ns, name)) page.onSpellplayLoaded(json)
+                    if (page.matches(ns, name)) page.onSpellplayLoaded(json, patternVector)
                 }
             }
         }

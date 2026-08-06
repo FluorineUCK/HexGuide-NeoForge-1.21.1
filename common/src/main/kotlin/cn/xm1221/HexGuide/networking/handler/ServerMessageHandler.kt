@@ -9,6 +9,7 @@ import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.api.mod.HexTags
 import at.petrak.hexcasting.common.lib.hex.HexActions
 import at.petrak.hexcasting.xplat.IXplatAbstractions
+import cn.xm1221.HexGuide.HexGuide
 import dev.architectury.networking.NetworkManager.PacketContext
 import cn.xm1221.HexGuide.networking.msg.*
 import net.minecraft.resources.ResourceLocation
@@ -53,20 +54,26 @@ fun HexGuideMessageC2S.applyOnServer(ctx: PacketContext) = ctx.queue {
                 .sendToPlayer(player)
         }
 
-        // 读取演示配置 data/<ns>/spellplays/<name>.json（服务端数据包资源）并传回客户端
+        // 读取演示配置 data/<ns>/spellplays/<name>.json + 全局 pattern_vector（默认 origin 表）并传回客户端
         is MsgBookLoadSpellplayC2S -> {
             val player = ctx.player as? ServerPlayer ?: return@queue
             val rl = ResourceLocation(ns, "spellplays/$name.json")
+            // pattern_vector.json（单文件，data/hexguide/pattern_vector.json）：{"<action id>": {"origin": [q, r]}, ...}
+            val pvRl = ResourceLocation(HexGuide.MODID, "pattern_vector.json")
             try {
                 val opt = player.server.resourceManager.getResource(rl)
+                val pvJson = try {
+                    player.server.resourceManager.getResource(pvRl)
+                        .map { it.open().use { r -> r.readBytes().toString(Charsets.UTF_8) } }.orElse(null)
+                } catch (e: Exception) { null }
                 if (opt.isPresent) {
                     val json = opt.get().open().use { it.readBytes().toString(Charsets.UTF_8) }
-                    MsgBookLoadSpellplayS2C(ns, name, json).sendToPlayer(player)
+                    MsgBookLoadSpellplayS2C(ns, name, json, pvJson).sendToPlayer(player)
                 } else {
-                    MsgBookLoadSpellplayS2C(ns, name, null).sendToPlayer(player)
+                    MsgBookLoadSpellplayS2C(ns, name, null, pvJson).sendToPlayer(player)
                 }
             } catch (e: Exception) {
-                MsgBookLoadSpellplayS2C(ns, name, null).sendToPlayer(player)
+                MsgBookLoadSpellplayS2C(ns, name, null, null).sendToPlayer(player)
             }
         }
 

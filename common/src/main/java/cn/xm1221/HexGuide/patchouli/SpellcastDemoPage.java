@@ -30,6 +30,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -39,8 +40,10 @@ import vazkii.patchouli.client.book.gui.GuiBook;
 import vazkii.patchouli.client.book.gui.GuiBookEntry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -96,6 +99,10 @@ public class SpellcastDemoPage extends BookPage {
     transient boolean playing = true;
     /** 配置文件的全局大标题（未播放时显示） */
     transient String demoTitle = "";
+    /** 全局转义颜色（考察/内省转义的图案颜色），默认黄 */
+    transient int escapedColor = 0xFFFFD93D;
+    /** pattern_vector 默认 origin 表：action id → [q, r]（服务端 data/hexguide/pattern_vector.json 回传） */
+    transient Map<String, int[]> patternVector = new HashMap<>();
     /** 最近加入的图案下标（用于执行结果 ERRORED 时染红） */
     transient int lastPatternIdx = -1;
     transient boolean lastStepCustomColor;
@@ -178,20 +185,48 @@ public class SpellcastDemoPage extends BookPage {
         return reqNs != null && reqNs.equals(ns) && reqName != null && reqName.equals(name);
     }
 
-    /** 服务端数据包返回的演示配置 → 解析并开始播放 */
-    public void onSpellplayLoaded(String json) {
+    /** 服务端数据包返回的演示配置 → 解析并开始播放；patternVectorJson 为默认 origin 表（可为 null） */
+    public void onSpellplayLoaded(String json, @Nullable String patternVectorJson) {
         if (json == null || spellcasting == null) return;
         try {
+            patternVector = parsePatternVector(patternVectorJson);
             steps = parseSteps(json);
             nextStep = 0;
             animTicks = 0;
+            // 应用全局转义颜色 + 重置执行状态
+            BookSpellcastingAccess access = as(spellcasting);
+            access.setDemoEscapedColor$hexguide(escapedColor);
+            access.resetDemoParenState$hexguide();
         } catch (Exception ignored) {}
+    }
+
+    /** 解析 pattern_vector.json（{"<action id>": {"origin": [q, r]}, ...}）→ action → [q, r] 映射 */
+    private static Map<String, int[]> parsePatternVector(@Nullable String json) {
+        Map<String, int[]> out = new HashMap<>();
+        if (json == null || json.isEmpty()) return out;
+        try {
+            JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+            for (Map.Entry<String, JsonElement> e : root.entrySet()) {
+                JsonElement oe = e.getValue();
+                if (oe.isJsonObject() && oe.getAsJsonObject().has("origin")
+                    && oe.getAsJsonObject().get("origin").isJsonArray()) {
+                    JsonArray arr = oe.getAsJsonObject().getAsJsonArray("origin");
+                    if (arr.size() >= 2) {
+                        out.put(e.getKey(), new int[] { arr.get(0).getAsInt(), arr.get(1).getAsInt() });
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+        return out;
     }
 
     private List<Step> parseSteps(String json) {
         List<Step> out = new ArrayList<>();
         JsonObject root = JsonParser.parseString(json).getAsJsonObject();
         demoTitle = root.has("title") ? root.get("title").getAsString() : "";
+        // 全局转义颜色（考察/内省转义的图案颜色），默认黄
+        escapedColor = root.has("escaped_color") ? parseColor(root.get("escaped_color").getAsString())
+                                                 : 0xFFFFD93D;
         int globalInterval = root.has("interval") ? root.get("interval").getAsInt() : 40;
         clearBefore = !root.has("clear_before") || root.get("clear_before").getAsBoolean();
         String globalStart = root.has("start_dir") ? root.get("start_dir").getAsString() : "NORTH_EAST";
@@ -243,16 +278,29 @@ public class SpellcastDemoPage extends BookPage {
                     s.peekIndices.add(pe.getAsInt());
                 }
             }
-            // 起始网格坐标：优先 "origin": [q, r]，其次 "q"/"r"；默认 [-1, 2]
+            // 起始网格坐标：优先 "origin": [q, r]，其次 "q"/"r"，再其次 pattern_vector 默认表（按 action），最后默认 [-1, 2]
             if (o.has("origin") && o.get("origin").isJsonArray()) {
                 JsonArray oc = o.getAsJsonArray("origin");
                 if (oc.size() >= 2) {
                     s.q = oc.get(0).getAsInt();
                     s.r = oc.get(1).getAsInt();
                 }
-            } else {
+            } else if (o.has("q") || o.has("r")) {
                 s.q = o.has("q") ? o.get("q").getAsInt() : -1;
                 s.r = o.has("r") ? o.get("r").getAsInt() : 2;
+            } else if (!s.action.isEmpty()) {
+                // action 存在且未显式给 origin → 查 pattern_vector（data/hexguide/pattern_vector.json）
+                int[] pv = patternVector.get(s.action);
+                if (pv != null) {
+                    s.q = pv[0];
+                    s.r = pv[1];
+                } else {
+                    s.q = -1;
+                    s.r = 2;
+                }
+            } else {
+                s.q = -1;
+                s.r = 2;
             }
             out.add(s);
         }
@@ -438,6 +486,7 @@ public class SpellcastDemoPage extends BookPage {
             BookSpellcastingAccess access = as(spellcasting);
             access.demoClearCanvas$hexguide();
             access.setStackClear$hexguide();
+            access.resetDemoParenState$hexguide(); // 重置转义状态（考察/内省）
         }
         nextStep = 0;
         animTicks = 0;
@@ -491,7 +540,7 @@ public class SpellcastDemoPage extends BookPage {
         }
     }
 
-    /** execute：网格绘制 pattern（无则 action）→ 上传本地 CastingImage，服务端执行 action（无则 pattern） */
+    /** execute：网格绘制 pattern（无则 action）→ 上传本地 CastingImage（含转义/内省状态），服务端按原版逻辑执行 */
     private void doExecute(BookSpellcastingAccess access, Step step) {
         try {
             HexPattern display = resolveDisplayPattern(step);
@@ -500,6 +549,7 @@ public class SpellcastDemoPage extends BookPage {
             playSound(HexSounds.START_PATTERN);
             CompoundTag image = access.demoGetImageNbt$hexguide();
             // 服务端执行用 exec（action 优先）；发送其签名与方向
+            // 转义/内省由服务端 CastingVM 原版逻辑处理，回传结果含状态与 resolutionType
             new MsgBookExecDemoC2S(exec.anglesSignature(), exec.getStartDir().name(), image).sendToServer();
         } catch (Exception ignored) {}
     }
@@ -526,6 +576,7 @@ public class SpellcastDemoPage extends BookPage {
         playSound(HexSounds.STAFF_RESET);
     }
 
+    /** 加入网格（转义结果由服务端回传后在 onExecResult 标色） */
     private void addPatternToGrid(BookSpellcastingAccess access, Step step, HexPattern pat) {
         // 起始点用步骤配置的坐标（默认 0,0 = 画布中心）；不随步骤移动，避免超出屏幕
         HexCoord origin = new HexCoord(step.q, step.r);
@@ -569,7 +620,7 @@ public class SpellcastDemoPage extends BookPage {
         return I18n.exists(t) ? I18n.get(t) : t;
     }
 
-    /** 服务端执行结果：更新本地栈显示；ERRORED 且未自定义颜色时把图案染红 */
+    /** 服务端执行结果：更新本地栈显示；ESCAPED 用转义色、ERRORED 且未自定义颜色时染红 */
     public void onExecResult(CompoundTag image, String resolutionType) {
         if (spellcasting == null) return;
         BookSpellcastingAccess access = as(spellcasting);
@@ -579,6 +630,12 @@ public class SpellcastDemoPage extends BookPage {
                 access.demoColor$hexguide(lastPatternIdx, COLOR_ERRORED);
             }
             playSound(HexSounds.CAST_FAILURE);
+        } else if ("ESCAPED".equals(resolutionType)) {
+            // 转义（考察/内省）：图案标转义色（escaped_color，可配置）
+            if (!lastStepCustomColor && lastPatternIdx >= 0) {
+                access.demoColor$hexguide(lastPatternIdx, escapedColor);
+            }
+            playSound(HexSounds.CAST_NORMAL);
         } else {
             playSound(HexSounds.CAST_SPELL);
         }

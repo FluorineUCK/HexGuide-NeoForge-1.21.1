@@ -57,6 +57,13 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
     @Unique private List<CompoundTag> pendingSync$hexguide = new ArrayList<>();
     // 演示页面：图案下标 → 自定义颜色（ARGB）
     @Unique private Map<Integer, Integer> demoColors$hexguide = new HashMap<>();
+    // ── 演示执行状态（透传：服务端 CastingVM 更新 → demoSetImageNbt 读回 → demoGetImageNbt 写回）──
+    @Unique private int demoOpenParens$hexguide = 0;               // 内省计数
+    @Unique private boolean demoEscapeNext$hexguide = false;       // 考察待转义
+    @Unique private CompoundTag demoParenthesized$hexguide = new CompoundTag(); // 内省中的列表
+    @Unique private int demoOpsConsumed$hexguide = 0;
+    @Unique private CompoundTag demoUserData$hexguide = new CompoundTag();
+    @Unique private int demoEscapedColor$hexguide = 0xFFFFD93D;    // 转义图案颜色（默认黄）
 
     @WrapWithCondition(
         method = "drawEnd",
@@ -119,8 +126,9 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
      * 让服务端施法 VM 从与本地相同的栈继续执行——本地栈与施法栈是同一个。
      */
     /**
-     * 演示页面：把图案加入网格（带可选自定义颜色），不触碰本地栈。
-     * origin 为该图案的网格锚点（各图案错开摆放避免重叠）；color = ARGB，-1 表示用默认类型色。
+     * 演示页面：把图案加入网格（带可选自定义颜色）。
+     * 转义/内省等状态由服务端 CastingVM 原版逻辑处理——execute 步骤全部上传服务端执行，
+     * 本地只负责状态透传（demoSetImageNbt 读回 / demoGetImageNbt 写回）与转义结果标色。
      */
     @Override public void demoAddPattern$hexguide(HexPattern pat, HexCoord origin, int color) {
         int idx = patterns.size();
@@ -130,6 +138,20 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
             demoColors$hexguide.put(idx, color);
         }
         this.calculateIotaDisplays();
+    }
+
+    /** 设置转义图案颜色（ARGB） */
+    @Override public void setDemoEscapedColor$hexguide(int color) {
+        demoEscapedColor$hexguide = color;
+    }
+
+    /** 重置本地执行状态（转义/内省等，页面切换或重播时清空） */
+    @Override public void resetDemoParenState$hexguide() {
+        demoOpenParens$hexguide = 0;
+        demoEscapeNext$hexguide = false;
+        demoParenthesized$hexguide = new CompoundTag();
+        demoOpsConsumed$hexguide = 0;
+        demoUserData$hexguide = new CompoundTag();
     }
 
     /** 演示页面：清空画布（网格 + usedSpots + 颜色覆盖），不清空本地栈 */
@@ -167,21 +189,22 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
         this.calculateIotaDisplays();
     }
 
-    /** 上传用：把本地栈打包成 CastingImage 的 NBT（服务端 loadFromNbt 后运行） */
+    /** 上传用：把本地栈 + 执行状态打包成 CastingImage 的 NBT（服务端 loadFromNbt 后按原版逻辑运行） */
     @Override public CompoundTag demoGetImageNbt$hexguide() {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
         for (CompoundTag c : cachedStack) list.add(c);
         tag.put("stack", list);
-        tag.putInt("open_parens", 0);
-        tag.putBoolean("escape_next", false);
-        tag.putInt("ops_consumed", 0);
-        tag.put("parenthesized", new CompoundTag());
-        tag.put("userdata", new CompoundTag());
+        // 写回本地保存的执行状态（服务端 CastingVM 用它们处理转义/内省）
+        tag.putInt("open_parens", demoOpenParens$hexguide);
+        tag.putBoolean("escape_next", demoEscapeNext$hexguide);
+        tag.putInt("ops_consumed", demoOpsConsumed$hexguide);
+        tag.put("parenthesized", demoParenthesized$hexguide);
+        tag.put("userdata", demoUserData$hexguide);
         return tag;
     }
 
-    /** 执行结果：用返回的 CastingImage 更新本地栈显示（栈 = 结果的 stack） */
+    /** 执行结果：用返回的 CastingImage 更新本地栈显示 + 读回执行状态（供下次上传继续转义/内省） */
     @Override public void demoSetImageNbt$hexguide(CompoundTag imageNbt) {
         List<CompoundTag> newStack = new ArrayList<>();
         ListTag list = imageNbt.getList("stack", Tag.TAG_COMPOUND);
@@ -189,6 +212,12 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
             newStack.add(list.getCompound(i));
         }
         cachedStack = newStack;
+        // 读回服务端更新过的执行状态（原版 CastingVM 处理转义/内省后回传）
+        if (imageNbt.contains("open_parens")) demoOpenParens$hexguide = imageNbt.getInt("open_parens");
+        if (imageNbt.contains("escape_next")) demoEscapeNext$hexguide = imageNbt.getBoolean("escape_next");
+        if (imageNbt.contains("ops_consumed")) demoOpsConsumed$hexguide = imageNbt.getInt("ops_consumed");
+        if (imageNbt.contains("parenthesized")) demoParenthesized$hexguide = imageNbt.getCompound("parenthesized");
+        if (imageNbt.contains("userdata")) demoUserData$hexguide = imageNbt.getCompound("userdata");
         this.calculateIotaDisplays();
     }
 

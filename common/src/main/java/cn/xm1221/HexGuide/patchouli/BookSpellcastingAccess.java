@@ -22,11 +22,16 @@ public interface BookSpellcastingAccess {
     void setWriteMode$hexguide(boolean write);
     void clearPatterns$hexguide();
     void setStackClear$hexguide();
+    /** 演示页：把图案加入网格（带可选自定义颜色）。转义由服务端原版逻辑处理，本地只标色 */
     void demoAddPattern$hexguide(HexPattern pattern, HexCoord origin, int color);
     void demoClearCanvas$hexguide();
     void demoColor$hexguide(int index, int color);
     void demoPushIota$hexguide(CompoundTag iotaNbt);
     void demoPeek$hexguide(int userIndex);
+    /** 设置转义图案的颜色（ARGB） */
+    void setDemoEscapedColor$hexguide(int color);
+    /** 重置本地执行状态（转义/内省等） */
+    void resetDemoParenState$hexguide();
     CompoundTag demoGetImageNbt$hexguide();
     void demoSetImageNbt$hexguide(CompoundTag imageNbt);
     int patternCount$hexguide();
