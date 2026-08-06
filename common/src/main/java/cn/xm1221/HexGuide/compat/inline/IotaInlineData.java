@@ -44,9 +44,17 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
     private Iota cached;
     /** 资源文件引用，非 null 时不走 Ascii85 解码 */
     private final String resourceRef;
+    /** 强制渲染颜色（ARGB）；-1 = 继承当前文本样式颜色（trContext.usableColor） */
+    private final int forcedColor;
 
-    public IotaInlineData(String raw) { this.raw = raw; this.resourceRef = null; }
-    private IotaInlineData(String raw, String ref) { this.raw = raw; this.resourceRef = ref; }
+    public IotaInlineData(String raw) { this(raw, null, -1); }
+    private IotaInlineData(String raw, String ref) { this(raw, ref, -1); }
+    private IotaInlineData(String raw, String ref, int color) {
+        this.raw = raw; this.resourceRef = ref; this.forcedColor = color;
+    }
+
+    /** 强制渲染颜色（ARGB），-1 表示继承文本样式 */
+    public int getForcedColor() { return forcedColor; }
 
     public Iota getOrDeserialize() {
         if (cached == null) {
@@ -77,22 +85,52 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
 
     @Override public Component asText(boolean w) {
         Iota i = getOrDeserialize();
-        return i == null ? Component.literal("\u274C") : i.display();
+        return i == null ? Component.literal("❌") : i.display();
     }
 
     public String getRaw() { return raw; }
 
     // ─── parse ───────────────────────────────────────────────
 
-    /** 工厂：含 .json 则走资源文件（可省略命名空间，默认 hexguide），否则 Ascii85 */
+    /**
+     * 工厂：含 .json 则走资源文件（可省略命名空间，默认 hexguide），否则 Ascii85。
+     * 颜色后缀（会从引用中剥离，不影响解码/资源名）：
+     * - *b          → 强制黑色
+     * - *w          → 强制白色
+     * - *RRGGBB     → 强制指定 RGB 颜色（如 *FF0000 红色）
+     * - 无后缀      → 继承当前文本样式颜色（trContext.usableColor，书页/tooltip 自适应）
+     */
     @org.jetbrains.annotations.Nullable
     public static IotaInlineData parse(String raw) {
-        if (raw.contains(".json")) {
-            var data = new IotaInlineData(raw, raw);
+        int forced = parseForcedColor(raw);
+        if (forced != -1) raw = stripColorSuffix(raw);
+        // 资源引用以 .json 结尾（用 endsWith 而非 contains，避免 Ascii85 编码里碰巧含 ".json" 子串被误判）
+        if (raw.endsWith(".json")) {
+            var data = new IotaInlineData(raw, raw, forced);
             if (data.getOrDeserialize() != null) return data;
+            HexGuide.LOGGER.warn("[IotaInlineData] 资源 iota 解析失败: {}", raw);
             return null;
         }
-        return new IotaInlineData(raw);
+        return new IotaInlineData(raw, null, forced);
+    }
+
+    /** 解析颜色后缀；无后缀返回 -1 */
+    private static int parseForcedColor(String s) {
+        if (s.endsWith("*b")) return 0xFF000000;
+        if (s.endsWith("*w")) return 0xFFFFFFFF;
+        if (s.length() >= 7 && s.charAt(s.length() - 7) == '*') {
+            try {
+                return 0xFF000000 | Integer.parseInt(s.substring(s.length() - 6), 16);
+            } catch (Exception ignored) {}
+        }
+        return -1;
+    }
+
+    /** 剥离颜色后缀 */
+    private static String stripColorSuffix(String s) {
+        if (s.endsWith("*b") || s.endsWith("*w")) return s.substring(0, s.length() - 2);
+        if (s.length() >= 7 && s.charAt(s.length() - 7) == '*') return s.substring(0, s.length() - 7);
+        return s;
     }
 
     /** 加载 Iota：优先资源管理器 assets/&lt;ns&gt;/iotas/&lt;path&gt;.json，回退游戏目录 &lt;gameDir&gt;/&lt;ns&gt;/iotas/&lt;path&gt;.json */
@@ -125,8 +163,12 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
             if (Files.exists(file)) {
                 return deserializeJson(JsonParser.parseString(Files.readString(file)));
             }
+            HexGuide.LOGGER.warn("[IotaInlineData] 找不到 iota 资源: assets/{}/iotas/{} 或游戏目录 {}", ns, path, file);
             return null;
-        } catch (Exception ignored) { return null; }
+        } catch (Exception e) {
+            HexGuide.LOGGER.warn("[IotaInlineData] 加载 iota 资源异常: {}", ref, e);
+            return null;
+        }
     }
 
     /** 解析 iota 资源文件：{"nbt":"<nbt字符串>"} 或直接 NBT JSON */

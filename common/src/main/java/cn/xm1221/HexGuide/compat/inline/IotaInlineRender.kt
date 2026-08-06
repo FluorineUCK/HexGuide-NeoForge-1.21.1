@@ -30,9 +30,13 @@ class IotaInlineRender : InlineRenderer<IotaInlineData> {
         // 1. 获取要显示的 Component（已包含 Iota 的显示样式）
         val component = d.asText(false)  // false 或 true 均可，asText 未使用该参数
 
-        // 2. 获得格式化的渲染序列（保留样式）
-        val seq = component.visualOrderText
-        context.drawString(Minecraft.getInstance().font,component,0,0,0)
+        // 2. 颜色：*b / *w / *RRGGBB 强制色；否则继承当前文本样式颜色
+        //    （trContext.usableColor 与 HexMod 的 InlinePatternRenderer 一致，书页/tooltip 自适应）
+        val color = if (d.getForcedColor() != -1) d.getForcedColor()
+                    else tr.usableColor()
+
+        // 3. 渲染（颜色参数只在样式无颜色时生效）
+        context.drawString(Minecraft.getInstance().font, component, 0, 0, color)
         // 5. 返回渲染宽度（必须与 charWidth 一致）
         return Minecraft.getInstance().font.width(component.visualOrderText)
     }

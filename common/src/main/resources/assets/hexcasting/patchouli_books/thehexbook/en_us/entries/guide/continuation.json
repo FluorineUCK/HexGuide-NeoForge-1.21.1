@@ -1,0 +1,19 @@
+{
+  "name": "hexguide.entry.guide.continuation",
+  "category": "hexcasting:guide",
+  "icon": "minecraft:diamond_pickaxe",
+  "sortnum": 8,
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.guide.continuation.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.continuation.1"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.continuation.2"
+    }
+  ]
+}

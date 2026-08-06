@@ -14,6 +14,7 @@ import at.petrak.hexcasting.api.casting.math.HexPattern;
 import at.petrak.hexcasting.client.gui.GuiSpellcasting;
 import at.petrak.hexcasting.common.lib.HexSounds;
 import at.petrak.hexcasting.common.lib.hex.HexActions;
+import cn.xm1221.HexGuide.HexGuide;
 import cn.xm1221.HexGuide.compat.inline.IotaInlineData;
 import cn.xm1221.HexGuide.networking.msg.MsgBookExecDemoC2S;
 import cn.xm1221.HexGuide.networking.msg.MsgBookLoadSpellplayC2S;
@@ -195,6 +196,9 @@ public class SpellcastDemoPage extends BookPage {
         clearBefore = !root.has("clear_before") || root.get("clear_before").getAsBoolean();
         String globalStart = root.has("start_dir") ? root.get("start_dir").getAsString() : "NORTH_EAST";
         JsonArray arr = root.has("steps") ? root.getAsJsonArray("steps") : new JsonArray();
+        // color / title 未给出时继承上一步的值（之后才是默认）
+        int lastColor = -1;
+        String lastTitle = "";
         for (JsonElement el : arr) {
             JsonObject o = el.getAsJsonObject();
             Step s = new Step();
@@ -203,8 +207,30 @@ public class SpellcastDemoPage extends BookPage {
             s.action = o.has("action") ? o.get("action").getAsString() : "";
             s.startDir = o.has("start_dir") ? o.get("start_dir").getAsString() : globalStart;
             s.interval = o.has("interval") ? o.get("interval").getAsInt() : globalInterval;
-            s.title = o.has("title") ? o.get("title").getAsString() : "";
-            if (o.has("color")) s.color = parseColor(o.get("color").getAsString());
+            if (o.has("color")) {
+                String colorStr = o.get("color").getAsString();
+                if (colorStr.isEmpty()) {
+                    s.color = -1;   // 显式空串 → 默认（执行蓝），并重置继承链
+                    lastColor = -1;
+                } else {
+                    s.color = parseColor(colorStr);
+                    lastColor = s.color; // 供后续步骤继承
+                }
+            } else {
+                s.color = lastColor; // 继承上一步颜色
+            }
+            if (o.has("title")) {
+                String titleStr = o.get("title").getAsString();
+                if (titleStr.isEmpty()) {
+                    s.title = "";   // 显式空串 → 默认（无标题，走 action 本地化），并重置继承链
+                    lastTitle = "";
+                } else {
+                    s.title = titleStr;
+                    lastTitle = titleStr; // 供后续步骤继承
+                }
+            } else {
+                s.title = lastTitle; // 继承上一步标题
+            }
             if (o.has("push")) {
                 s.pushIota = resolvePushIota(o.get("push"));
             }
@@ -312,8 +338,10 @@ public class SpellcastDemoPage extends BookPage {
             }
             if (s.startsWith("iota:")) {
                 IotaInlineData data = IotaInlineData.parse(s.substring(5));
+                HexGuide.LOGGER.info("[DemoPush] push iota '{}' → IotaInlineData.parse → {}", s, data);
                 if (data != null) {
                     Iota iota = data.getOrDeserialize();
+                    HexGuide.LOGGER.info("[DemoPush] push iota '{}' → getOrDeserialize → {}", s, iota);
                     if (iota != null) return IotaType.serialize(iota);
                 }
             }
@@ -476,17 +504,20 @@ public class SpellcastDemoPage extends BookPage {
         } catch (Exception ignored) {}
     }
 
-    /** push：绘制 pattern（无则 action）→ 把配置的自定义 iota 压入本地栈 */
+    /** push：可选绘制 pattern（无则 action）→ 把配置的自定义 iota 压入本地栈（无图案也要入栈） */
     private void doPush(BookSpellcastingAccess access, Step step) {
-        try {
-            HexPattern pat = resolveDisplayPattern(step);
-            addPatternToGrid(access, step, pat);
-            playSound(HexSounds.START_PATTERN);
-            if (step.pushIota != null) {
-                access.demoPushIota$hexguide(step.pushIota);
-                playSound(HexSounds.CAST_NORMAL);
-            }
-        } catch (Exception ignored) {}
+        // 图案绘制与入栈分离：没配 pattern/action 时跳过绘制，但入栈不受影响
+        if (!step.sig.isEmpty() || !step.action.isEmpty()) {
+            try {
+                HexPattern pat = resolveDisplayPattern(step);
+                addPatternToGrid(access, step, pat);
+                playSound(HexSounds.START_PATTERN);
+            } catch (Exception ignored) {}
+        }
+        if (step.pushIota != null) {
+            access.demoPushIota$hexguide(step.pushIota);
+            playSound(HexSounds.CAST_NORMAL);
+        }
     }
 
     /** clear：清空画布（网格），栈保留 */
