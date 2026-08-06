@@ -32,6 +32,7 @@
 
     entry: {
       search: "Book Search",
+      hexguide_patterns: "HexGuide Patterns",
       guide: {
         stack: "The Stack, the Grid, and the Casting Environment",
         iotas: "Iotas",
@@ -98,6 +99,10 @@
         into: "\"I shall go and see, I shall go and know, I shall learn what I seek. Though the named shall return to the void, and the knowing shall be bound to the path, human toil yields nothing in the end — yet strive with all one's heart, and die halfway, facing the Great Work, with no regrets in life.\"",
         hexguide: "I use this notebook to record my understanding of Hex Casting, and in my studies it will always accompany me, from the very beginning to the very end.$(br2)I suspect the knowledge in this book may grow too vast and complex for any mind to grasp at once, so I am determined to write down my deeper understanding of the craft here. For those who come after...$(br2)$(o)But who will ever read my $(thing)notes$()? And who will read the $(l:hexcasting:guide)notes on the notes$()?$()",
       },
+      hexguide_patterns: {
+        copy: "$(l:hexcasting:guide/hexguide_patterns#hexguide:copy)$(action)Copy Iota/$ copies the top Iota of the stack to your clipboard and prints a clickable reference in chat, so you can share it or paste it into the book. It also saves the Iota as a JSON file under $(thing)hexguide/iotas/$ in the game directory, which can be displayed inline anywhere via a reference like $(br)$(code)iota:hash.json/$.",
+        demo: "$(l:hexcasting:guide/hexguide_patterns#hexguide:demo)$(action)Save Demo/$ takes the list Iota on top of the stack (each Pattern Iota in the list becomes one step of the demo), generates a spellplay configuration file, and saves it under $(thing)hexguide/spellplays/$ in the game directory. Drop the generated file into a datapack at $(code)data/hexguide/spellplays/$ and it can be played on the Spellcasting Demo page of this book.",
+      },
     },
 
     book: {
@@ -123,6 +128,8 @@
       "hexguide:": {
         congratulate: "Congratulate Player",
         "congratulate/great": "Great Congrats!",
+        copy: "Copy Iota",
+        demo: "Save Demo",
       },
 
       // use this to add shortened versions of pattern names if the full name won't fit in the ingame book

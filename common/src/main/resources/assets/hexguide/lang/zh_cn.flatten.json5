@@ -35,6 +35,7 @@
 
     entry: {
       search: "搜索手册",
+      hexguide_patterns: "HexGuide 图案",
       guide: {
         stack: "栈，咒术网格与施法环境",
         iotas: "Iotas",
@@ -102,6 +103,10 @@
       casting: {
         into: "“我必往见，我必往识，我必知我所求索。虽有名者必归于虚空，有知者必困于道途，人之辛苦，百无一获，然穷心竭力，得死半途，尸朝卓伟，生亦无可憾”",
         hexguide: "我用这本笔记记录我对咒法学的认识，在我对咒法学的研究中，这本笔记将始终伴随着我，从最初的最初到最后的最后。$(br2)我预感到这本笔记中的知识可能会繁多又复杂到人脑难以一次性理清的程度，所以我决心在笔记中写下自己对咒法学更深刻的理解。以留诸后人……$(br2)$(o)但是，又是谁会翻阅我的$(thing)笔记$()呢？又是谁会翻阅我的$(l:hexcasting:guide)笔记的笔记$()呢？$()"
+      },
+      hexguide_patterns: {
+        copy: "$(l:hexcasting:guide/hexguide_patterns#hexguide:copy)$(action)复制Iota/$会把栈顶的Iota复制到剪贴板，并在聊天栏给出可点击的引用，方便分享或粘贴到书中。同时它会将该Iota以JSON形式自动保存到游戏目录的$(thing)hexguide/iotas/$文件夹，之后即可用形如$(br)$(code)iota:hash.json/$的引用在任何地方内嵌显示。",
+        demo: "$(l:hexcasting:guide/hexguide_patterns#hexguide:demo)$(action)保存演示/$取栈顶的列表Iota（列表中的每个图案Iota会成为演示的一步），生成一份施法演示配置文件，保存到游戏目录的$(thing)hexguide/spellplays/$文件夹。将生成的文件放入数据包的$(code)data/hexguide/spellplays/$目录后，即可在本手册的施法演示页面上播放。"
       }
     },
 
@@ -128,6 +133,8 @@
       "hexguide:": {
         congratulate: "恭喜玩家",
         "congratulate/great": "大恭喜！",
+        copy: "复制Iota",
+        demo: "保存演示",
       },
 
       book: {
