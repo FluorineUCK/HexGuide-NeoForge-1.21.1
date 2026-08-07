@@ -1,0 +1,22 @@
+{"interval":30,
+  "clear_before":true,
+  "start_dir":"NORTH_EAST",
+  "steps":[
+    {"type":"execute","pattern":"qaq","start_dir":"NORTH_EAST","origin":[-1,2],"title": "hexguide.demo.logics.0"},
+    {"type":"execute","pattern":"aa","start_dir":"EAST","origin":[-1,1],"title": "hexguide.demo.logics.0"},
+    {"type":"execute","pattern":"qaq","start_dir":"NORTH_EAST","origin":[-1,2],"title": "hexguide.demo.logics.0"},
+    {"type":"execute","pattern":"wa","start_dir":"NORTH_EAST","origin":[-1,2],"title": "hexguide.demo.logics.0"},
+    {"type":"execute","pattern":"wqaawdd","start_dir":"EAST","origin":[-2,1],"title": "hexguide.demo.logics.0"},
+    {"type":"execute","pattern":"aadaa","start_dir":"EAST","origin":[-1,2],"title": "hexguide.demo.logics.1"},
+    {"type":"execute","pattern":"d","start_dir":"EAST","origin":[0,0],"title": "hexguide.demo.logics.2"},
+    {"type":"execute","pattern":"ad","start_dir":"WEST","origin":[0,0],"title": "hexguide.demo.logics.3"},
+    {"type":"push","pattern":"qqq","start_dir":"WEST","origin":[0,0],"title": "hexguide.demo.logics.c"},
+    {"type":"push","pattern":"a","start_dir":"SOUTH_EAST","origin":[0,0],"color": "#ffd93d","title": "hexguide.demo.logics.c"},
+    {"type":"push","pattern":"eee","start_dir":"EAST","origin":[0,0],"push": "iota:[pattern{SOUTH_EAST,a}]","title": "hexguide.demo.logics.c"},
+    {"type":"push","pattern":"qqq","start_dir":"WEST","origin":[0,0],"title": "hexguide.demo.logics.c"},
+    {"type":"push","pattern":"qaqqqqq","start_dir":"EAST","origin":[-1,1],"color": "#ffd93d","title": "hexguide.demo.logics.c"},
+    {"type":"push","pattern":"eee","start_dir":"EAST","origin":[0,0], "push":"iota:[pattern{EAST,qaqqqqq}]","title": "hexguide.demo.logics.c"},
+    {"type":"execute","pattern":"awdd","start_dir":"NORTH_WEST","origin":[-1,2],"title": "hexguide.demo.logics.4"},
+    {"type":"peek","pattern":"deaqq","start_dir":"SOUTH_EAST","origin":[0,1],"indices": [0,1],"title": "hexguide.demo.logics.5"}
+  ]
+}
