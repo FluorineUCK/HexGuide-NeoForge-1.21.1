@@ -1,6 +1,0 @@
-{
-  "hexcasting:get_caster": { "origin": [-1, 2] },
-  "hexcasting:raycast": { "origin": [-2, 1] },
-  "hexcasting:raycast/axis": { "origin": [-2, 1] },
-  "hexcasting:empty_list": { "origin": [-2, 1] }
-}

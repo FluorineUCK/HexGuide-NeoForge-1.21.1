@@ -1,7 +1,7 @@
 {
   "name": "hexguide.entry.guide.spells.lights",
   "category": "hexcasting:guide/spells",
-  "icon": "minecraft:grass",
+  "icon": "minecraft:grass_block",
   "sortnum": 0,
   "advancement": "hexcasting:root",
   "read_by_default": false,

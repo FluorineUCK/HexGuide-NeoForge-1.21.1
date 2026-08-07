@@ -62,7 +62,7 @@ object HexGuideTagFixer {
             // 1b. 直接遍历 mods 目录 jar（Connector 环境下 ResourceManager 读不到 Fabric 附属的 data）
             collectFromModsDir(fabric)
 
-            HexGuide.LOGGER.info("[HexGuideTagFixer] 读取到 Fabric 路径 tag: {}", fabric.keys)
+            HexGuide.LOGGER.debug("[HexGuideTagFixer] 读取到 Fabric 路径 tag: {}", fabric.keys)
 
             // 2. 现有 tag（Forge 路径已加载的） + Fabric 路径补的，合并去重
             val merged = mutableMapOf<TagKey<ActionRegistryEntry>, List<Holder<ActionRegistryEntry>>>()
@@ -88,7 +88,7 @@ object HexGuideTagFixer {
 
             // 3. 重新绑定（Registry.bindTags 是 public）
             reg.bindTags(merged)
-            HexGuide.LOGGER.info(
+            HexGuide.LOGGER.debug(
                 "[HexGuideTagFixer] 绑定完成，注册表现有 tag: {}",
                 reg.getTagNames().map { it.location() }
             )

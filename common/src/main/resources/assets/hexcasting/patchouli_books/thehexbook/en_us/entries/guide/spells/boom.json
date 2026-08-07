@@ -1,7 +1,7 @@
 {
   "name": "hexguide.entry.guide.spells.boom",
   "category": "hexcasting:guide/spells",
-  "icon": "minecraft:grass",
+  "icon": "minecraft:tnt",
   "sortnum": 0,
   "advancement": "hexcasting:root",
   "read_by_default": false,
@@ -10,7 +10,6 @@
     {
       "type": "hexguide:component_text",
       "text": "hexguide.page.guide.spells.boom.1"
-    },
-    "hexguide.page.guide.spells.boom.2"
+    }
   ]
 }

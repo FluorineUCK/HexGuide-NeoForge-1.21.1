@@ -190,7 +190,6 @@ public class SpellcastDemoPage extends BookPage {
         if (json == null || spellcasting == null) return;
         try {
             patternVector = parsePatternVector(patternVectorJson);
-            HexGuide.LOGGER.info("[DemoPush] pattern_vector 收到 {} 条: {}", patternVector.size(), patternVectorJson);
             steps = parseSteps(json);
             nextStep = 0;
             animTicks = 0;
@@ -389,10 +388,8 @@ public class SpellcastDemoPage extends BookPage {
             }
             if (s.startsWith("iota:")) {
                 IotaInlineData data = IotaInlineData.parse(s.substring(5));
-                HexGuide.LOGGER.info("[DemoPush] push iota '{}' → IotaInlineData.parse → {}", s, data);
                 if (data != null) {
                     Iota iota = data.getOrDeserialize();
-                    HexGuide.LOGGER.info("[DemoPush] push iota '{}' → getOrDeserialize → {}", s, iota);
                     if (iota != null) return IotaType.serialize(iota);
                 }
             }
