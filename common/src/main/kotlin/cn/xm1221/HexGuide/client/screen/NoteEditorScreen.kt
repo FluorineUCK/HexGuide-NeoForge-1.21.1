@@ -184,10 +184,9 @@ class NoteEditorScreen(
                 val ly = ((mouseY - editY) / SCALE).toInt().coerceAtLeast(0)
                 val row = (ly / LINE_HEIGHT).toInt()
                 val text = pages[currPage]
-                val lines = wrapLines(text)
-                val lineText = lines.getOrNull(row) ?: ""
+                val lineText = wrapLines(text).getOrNull(row) ?: ""
                 val col = font.splitter.plainIndexAtWidth(lineText, lx, Style.EMPTY)
-                val pos = (rowToTextOffset(lines, row) + col).coerceAtMost(text.length)
+                val pos = (rowToTextOffset(text, row) + col).coerceAtMost(text.length)
                 helper.setCursorPos(pos)
                 helper.setSelectionPos(pos) // 取消选中
                 return true
@@ -208,17 +207,15 @@ class NoteEditorScreen(
     // ---- 渲染 ----
 
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        // 背景：hexguide:textures/gui/note_editor.png（640×360，1:1 对应 GUI 逻辑坐标，拉伸到屏幕；缺失时回退默认背景）
+        // 默认虚化背景先画（透明纹理处露出它）
+        renderBackground(graphics)
+        // 背景纹理 640×360 固定 1:1：x 居中（对齐 width/2 系 UI），y 顶部对齐（UI 的 y 是屏幕绝对坐标 0 起）
         if (Minecraft.getInstance().resourceManager.getResource(BG_TEX).isPresent) {
-            graphics.blit(BG_TEX, 0, 0, 0f, 0f, width, height, 640, 360)
-        } else {
-            renderBackground(graphics) // Screen 默认背景
+            val bx = (width - 640) / 2
+            graphics.blit(BG_TEX, bx, 0, 0f, 0f, 640, 360, 640, 360)
         }
         titleBox?.render(graphics, mouseX, mouseY, partialTicks)
         graphics.drawCenteredString(font, Component.translatable("hexguide.notes.title"), width / 2, 4, 0xFF777777.toInt())
-
-        // 文本区占位背景（视觉尺寸；若背景纹理已画好文本区可自行删掉这层）
-        graphics.fill(editX - 3, editY - 3, editX + editVW + 3, editY + editVH + 3, 0x33_3a3a3a.toInt())
 
         val text = pages[currPage]
         val lines = wrapLines(text)
@@ -233,17 +230,17 @@ class NoteEditorScreen(
         val uf = font
         for (i in start until lines.size) {
             val y = (i - start) * LINE_HEIGHT
-            graphics.drawString(uf, lines[i], 0, y, 0xFFE0E0E0.toInt(), false)
+            graphics.drawString(uf, lines[i], 0, y, 0xFF000000.toInt(), false)
         }
         // 光标（常亮）
         val cursor = helper.getCursorPos().coerceIn(0, text.length)
-        val (row, col) = cursorToRowCol(lines, cursor)
+        val (row, col) = cursorToRowCol(text, cursor)
         val visRow = row - start
         if (visRow in 0 until MAX_LINES) {
             val lineText = lines.getOrNull(row) ?: ""
             val caretX = uf.width(lineText.substring(0, col.coerceIn(0, lineText.length)))
             val caretY = visRow * LINE_HEIGHT
-            graphics.fill(caretX, caretY, caretX + 1, caretY + LINE_HEIGHT, 0xFFFFFFFF.toInt())
+            graphics.fill(caretX, caretY, caretX + 1, caretY + LINE_HEIGHT, 0xFF000000.toInt())
         }
         graphics.pose().popPose()
 
@@ -279,24 +276,43 @@ class NoteEditorScreen(
         return out
     }
 
-    /** 行 → 该行行首的字符偏移 */
-    private fun rowToTextOffset(lines: List<String>, row: Int): Int {
-        var offset = 0
-        for (i in 0 until row.coerceAtMost(lines.size - 1)) {
-            offset += lines[i].length + 1 // +1 换行符
+    /** 每行行首字符偏移（与 wrapLines 同一拆行规则：宽度折行行间无字符、\n 换行消费 1 字符）。
+     *  文本以 \n 结尾时末尾补一个空行（光标可落到新行行首）。 */
+    private fun lineStarts(text: String): List<Int> {
+        if (text.isEmpty()) return listOf(0)
+        val splitter = font.splitter
+        val starts = mutableListOf(0)
+        var remaining = text
+        var consumed = 0
+        while (remaining.isNotEmpty()) {
+            val nl = remaining.indexOf('\n')
+            val limit = splitter.plainIndexAtWidth(remaining, EDIT_WIDTH, Style.EMPTY)
+            val end = if (nl in 0 until limit) nl else limit.coerceAtMost(remaining.length)
+            val seg = if (nl in 0 until limit) end + 1 else end
+            consumed += seg
+            if (consumed < text.length) starts.add(consumed)
+            remaining = remaining.substring(seg)
+            if (remaining.isEmpty() && seg > 0 && text.endsWith('\n')) {
+                starts.add(consumed) // 末尾空行
+                break
+            }
         }
-        return offset
+        return starts
     }
 
-    /** 字符偏移 → (行, 列)，基于 wrapLines 的行拆分 */
-    private fun cursorToRowCol(lines: List<String>, cursor: Int): Pair<Int, Int> {
-        var remaining = cursor
-        for ((i, line) in lines.withIndex()) {
-            val len = line.length
-            if (remaining <= len) return i to remaining
-            remaining -= len + 1 // +1 换行符
+    /** 行 → 该行行首的字符偏移（基于 lineStarts，不假设每行间必有 \n） */
+    private fun rowToTextOffset(text: String, row: Int): Int {
+        return lineStarts(text).getOrElse(row) { text.length }
+    }
+
+    /** 字符偏移 → (行, 列)，基于 lineStarts（折行/换行都正确） */
+    private fun cursorToRowCol(text: String, cursor: Int): Pair<Int, Int> {
+        val starts = lineStarts(text)
+        var row = 0
+        for (i in starts.indices) {
+            if (i + 1 < starts.size && cursor >= starts[i + 1]) row = i + 1 else break
         }
-        return (lines.size - 1).coerceAtLeast(0) to remaining.coerceAtLeast(0)
+        return row to (cursor - starts[row]).coerceAtLeast(0)
     }
 
     companion object {

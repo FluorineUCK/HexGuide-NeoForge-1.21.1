@@ -1,9 +1,10 @@
 {
-  "name": "hexguide.entry.notes",
-  "category": "hexcasting:guide",
+  "name": "hexguide.entry.notes.notes",
+  "category": "hexcasting:notes",
   "icon": "minecraft:book",
   "sortnum": 60,
-  "advancement": "hexcasting:root",
+  "advancement": "hexcasting:enlightenment",
+  "entry_color": "54398a",
   "read_by_default": true,
   "pages": [
     {

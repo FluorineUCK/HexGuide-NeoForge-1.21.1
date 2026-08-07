@@ -26,7 +26,7 @@
       save: "保存",
       cancel: "取消",
       need_paper: "副手需要持有纸才能写笔记！",
-      need_more_paper: "副手纸不够！",
+      need_more_paper: "纸不够！",
       scrap_hint: "副手持此残页施放 note/import 可加入自己的笔记",
       imported: "已导入笔记：%s",
       title: "标题",
@@ -42,7 +42,9 @@
       mods: "新知识的记录",
       spells: "常用咒术示例",
       description0: "我将我因为各种机缘巧合了解到的关于咒术新知识整理后记录于此，便于我日后取用。",
-      description1: "我在这里记录一些常用的咒术，避免遗忘，也方便我基于此再创作新的咒术。"
+      description1: "我在这里记录一些常用的咒术，避免遗忘，也方便我基于此再创作新的咒术。",
+      notes: "玩家笔记",
+      description2: "我用紫水晶笔记录的一切。"
     },
     demo: {
       logics: {
@@ -57,6 +59,11 @@
     },
 
     entry: {
+      notes: {
+        items: "如何撰写笔记",
+        notes: "阅读笔记",
+        notes_index: "笔记目录"
+      },
       search: "搜索手册",
       hexguide_patterns: "HexGuide 图案",
       guide: {
@@ -70,7 +77,7 @@
         logics: "逻辑分支",
         continuation: "延续、跳转与伊里斯",
         tips: "关于避免事故",
-        notes_index: "玩家笔记",
+        notes_index: "新增笔记",
         notes: "我的笔记",
         spells: {
           blocks: "批量破坏方块",
@@ -87,11 +94,22 @@
     },
 
     page: {
+      "notes": {
+        items: {
+          "0": "$(action)咒术笔记$()早就不是寻常的笔记，因此也绝非一般的笔可以书写，唯有使用我精心开发的紫水晶笔才能用媒质在纸上铭刻下我作为$(hex)真理的掌握者$()神圣的宣言。$(br2)$(o)“道可道，非常道”",
+          "1": "一旦我用$(hex)紫水晶笔$()在纸上铭刻完成，那么这纸，也就因为我受$(hex)自然之独宠$()而变得不同：它已是我笔记的残页，是记录万法的图书馆中的一小部分。可以用$(action)书吏之精思$()从其中读取出我独创的$(thing)笔记Iota$()，将笔记Iota组成列表，便可以用特殊的法术将其纳入到我的笔记之中。另有一些图案可以操作这些新增的条目。",
+          "2": "接受笔记Iota列表，将其纳入笔记中作为一个章节。",
+          "3": "返回我纳入的作为章节的所有笔记Iota列表所组成的列表",
+          "4": "接受一个索引，返回那个索引所对应的章节的笔记Iota列表，此索引就是目录的顺序。",
+          "5": "接受一个索引，删除那个索引对应的条目",
+          "6": "会把栈顶的Iota转换为文本复制到剪贴板并揭示，方便分享或粘贴到书中。若提供的布尔值为true，同时它会将该Iota自动保存到游戏目录的$(thing)hexguide/iotas/$文件夹，之后即可用形如iota:hash.json/$的引用在任何地方内嵌显示。"
+        },
+      },
       search: {
         "0": "下面是一个用于搜索《咒术笔记》内容和条目的文本框。只需输入名称或关键词即可找到相关条目。点击任意结果直接跳转到对应页面。",
       },
       notes_index: {
-        "0": "在这里你可以书写自己的笔记。每条笔记是一系列页面；点击上方列表中的某条笔记即可翻阅。笔记保存在服务器存档中，也可以作为 Iota 与其他玩家交换。",
+        "0": "此处记录了借由$(thing)笔记残章$()所获取的所有笔记，点击以跳转到对应条目。",
       },
       guide: {
         spells: {
@@ -162,7 +180,7 @@
         hexguide: "我用这本笔记记录我对咒法学的认识，在我对咒法学的研究中，这本笔记将始终伴随着我，从最初的最初到最后的最后。$(br2)我预感到这本笔记中的知识可能会繁多又复杂到人脑难以一次性理清的程度，所以我决心在笔记中写下自己对咒法学更深刻的理解。以留诸后人……$(br2)$(o)但是，又是谁会翻阅我的$(thing)笔记$()呢？又是谁会翻阅我的$(l:hexcasting:guide)笔记的笔记$()呢？$()"
       },
       hexguide_patterns: {
-        copy: "$(l:hexcasting:guide/hexguide_patterns#hexguide:copy)$(action)复制Iota/$会把栈顶的Iota复制到剪贴板，并在聊天栏给出可点击的引用，方便分享或粘贴到书中。同时它会将该Iota以JSON形式自动保存到游戏目录的$(thing)hexguide/iotas/$文件夹，之后即可用形如$(br)$(code)iota:hash.json/$的引用在任何地方内嵌显示。",
+        copy: "会把栈顶的Iota转换为文本复制到剪贴板，并在聊天栏给出可点击的引用，方便分享或粘贴到书中。同时它会将该Iota以JSON形式自动保存到游戏目录的$(thing)hexguide/iotas/$文件夹，之后即可用形如iota:hash.json/$的引用在任何地方内嵌显示。",
         demo: "$(l:hexcasting:guide/hexguide_patterns#hexguide:demo)$(action)保存演示/$取栈顶的列表Iota（列表中的每个图案Iota会成为演示的一步），生成一份施法演示配置文件，保存到游戏目录的$(thing)hexguide/spellplays/$文件夹。将生成的文件放入数据包的$(code)data/hexguide/spellplays/$目录后，即可在本手册的施法演示页面上播放。"
       }
     },
@@ -190,8 +208,12 @@
       "hexguide:": {
         congratulate: "恭喜玩家",
         "congratulate/great": "大恭喜！",
-        copy: "复制Iota",
+        copy: "获取文本",
         demo: "保存演示",
+        "note/import": "纳入笔记",
+        "note/list": "维纳斯之精思",
+        "note/get": "墨丘利之纯化",
+        "note/delete": "删除条目"
       },
 
       book: {

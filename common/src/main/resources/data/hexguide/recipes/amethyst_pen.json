@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:feather" },
+    { "tag": "hexcasting:staves" },
+    { "item": "hexcasting:amethyst_dust" }
+  ],
+  "result": {
+    "item": "hexguide:amethyst_pen"
+  }
+}

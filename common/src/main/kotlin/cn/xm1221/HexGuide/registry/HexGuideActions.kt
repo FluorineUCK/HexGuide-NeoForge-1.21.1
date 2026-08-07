@@ -7,7 +7,10 @@ import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.common.lib.HexRegistries
 import at.petrak.hexcasting.common.lib.hex.HexActions
 import cn.xm1221.HexGuide.casting.actions.OpDemoSave
+import cn.xm1221.HexGuide.casting.actions.OpNoteDelete
+import cn.xm1221.HexGuide.casting.actions.OpNoteGet
 import cn.xm1221.HexGuide.casting.actions.OpNoteImport
+import cn.xm1221.HexGuide.casting.actions.OpNoteList
 import cn.xm1221.HexGuide.casting.actions.OpTextCopy
 
 
@@ -22,6 +25,10 @@ object HexGuideActions : HexGuideRegistrar<ActionRegistryEntry>(
     val DEMO = make("demo",HexDir.NORTH_EAST,"aqqqadeeed", OpDemoSave())
     // note/import：副手笔记残页 → 导入笔记库（交换用）
     val NOTE_IMPORT = make("note/import",HexDir.NORTH_EAST,"aqwqqa", OpNoteImport())
+    // 笔记查询/管理：所有笔记 / 按索引取单个 / 按索引删除（索引 0-based）
+    val NOTE_LIST = make("note/list",HexDir.NORTH_EAST,"wwdewaq", OpNoteList())
+    val NOTE_GET = make("note/get",HexDir.NORTH_EAST,"wdea", OpNoteGet())
+    val NOTE_DELETE = make("note/delete",HexDir.NORTH_EAST,"dawdwa", OpNoteDelete())
 
     private fun make(name: String, startDir: HexDir, signature: String, action: Action) =
         make(name, startDir, signature) { action }

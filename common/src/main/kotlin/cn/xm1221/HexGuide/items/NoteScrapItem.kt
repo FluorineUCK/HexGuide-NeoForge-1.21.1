@@ -22,7 +22,6 @@ class NoteScrapItem(props: Properties) : Item(props), IotaHolderItem {
     override fun appendHoverText(stack: ItemStack, level: Level?, tooltip: MutableList<Component>, flag: TooltipFlag) {
         // 标准 iota 持有物品显示（标题 + 数据）
         IotaHolderItem.appendHoverText(this, stack, tooltip, flag)
-        tooltip.add(Component.translatable("hexguide.notes.scrap_hint"))
         super.appendHoverText(stack, level, tooltip, flag)
     }
 

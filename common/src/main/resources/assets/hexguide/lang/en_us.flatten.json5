@@ -39,6 +39,9 @@
     categories: {
       guide: "Hex Guide",
       description: "This section was written by my hand — of that I am certain — and yet whether it truly comes from my hand is another matter. I remember leaving my mark in this notebook word by word, and still I cannot help but wonder for whom these sections were written. What reader was I hoping for back then? It is a question worth pondering — one that is sometimes even frightening.$(br2)$(o)\"All that I know, I speak freely.\"$()",
+      // TODO: 填充
+      notes: "Player Notes",
+      description2: "TODO: fill",
     },
 
     demo: {
@@ -54,6 +57,9 @@
     },
 
     entry: {
+      notes: {
+        items: "TODO: fill",
+      },
       search: "Book Search",
       hexguide_patterns: "HexGuide Patterns",
       guide: {
@@ -75,6 +81,16 @@
     },
 
     page: {
+      "notes": {
+        items: {
+          "0": "TODO: fill",
+          "1": "TODO: fill",
+          "2": "TODO: fill",
+          "3": "TODO: fill",
+          "4": "TODO: fill",
+          "5": "TODO: fill",
+        },
+      },
       search: {
         "0": "Below is a text search box for the contents and entries of The HexBook. Simply type in a name, keyword, or natural language description to find relevant entries. Click any result to jump directly to that page.",
       },

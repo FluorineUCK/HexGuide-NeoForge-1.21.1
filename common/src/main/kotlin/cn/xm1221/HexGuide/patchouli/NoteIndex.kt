@@ -36,9 +36,8 @@ class NoteIndex : BookPage() {
             for (i in 0 until visible) {
                 val sec = sections[i]
                 val title = sec.firstOrNull()?.title?.ifEmpty { "（无标题）" } ?: "（空节）"
-                val pages = sec.size
-                // 行文字限宽（避免溢出页面右侧）
-                val full = "▸ $title  [$pages]"
+                // 行 = [索引] 标题（索引 0-based，与 note/get、note/delete 一致；不显示页数）
+                val full = "[$i] $title"
                 val text = if (font.width(full) > GuiBook.PAGE_WIDTH - 8)
                     font.splitter.plainHeadByWidth(full, GuiBook.PAGE_WIDTH - 16, Style.EMPTY) + "…"
                 else full
@@ -60,8 +59,8 @@ class NoteIndex : BookPage() {
         for (i in 0 until visible) {
             if (parent.isAreaHovered(mouseX.toInt(), mouseY.toInt(), ROW_X, LIST_Y + i * ROW_H, GuiBook.PAGE_WIDTH - ROW_X * 2, ROW_H)) {
                 ClientNotes.setCurrent(i)
-                // 跳到显示条目（替换渲染的 NoteIota 列表；动态找 entry id）
-                val notesEntry = parent.book.contents.entries.values.firstOrNull { it.getId().path == "guide/notes" }
+                // 跳到显示条目（替换渲染的 NoteIota 列表；动态找 entry id，适配条目移动——path 以 notes 结尾）
+                val notesEntry = parent.book.contents.entries.values.firstOrNull { it.getId().path.endsWith("/notes") }
                 if (notesEntry != null) {
                     parent.navigateToEntry(notesEntry.getId(), 0, false)
                     return true
