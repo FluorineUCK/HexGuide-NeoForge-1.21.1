@@ -85,7 +85,7 @@ The client requests the config from the server (which reads the datapack), so **
 | `pattern` | 图案**笔顺**（角度字符，如 `"aqw"`）——**网格显示**优先 |
 | `action` | 已注册图案 id（如 `"hexcasting:get_caster"`）——**服务端执行**优先 |
 | `start_dir` | 该步的起始朝向（如 `"EAST"`），默认取全局 |
-| `origin` / `q`,`r` | 图案起始**网格坐标**（默认 `[-1, 2]`；`origin` 为 `[q, r]` 数组） |
+| `origin` / `q`,`r` | 图案起始**网格坐标**（默认 `[-1, 2]`；`origin` 为 `[q, r]` 数组；有 `action` 时优先读 `pattern_vector` 默认表） |
 | `color` | 图案颜色（`"#rrggbb"` / `"0xrrggbb"` / 十进制），默认执行蓝 |
 | `interval` | 该步播放间隔（tick），默认取全局 |
 | `push` | push 步骤的 Iota（见下文 §2） |
@@ -94,6 +94,30 @@ The client requests the config from the server (which reads the datapack), so **
 > **pattern 与 action 同时指定时**：网格绘制 `pattern` 的图案，服务端执行 `action` 的图案（显示与执行分离）。
 
 > **When both `pattern` and `action` are given**: the grid draws `pattern`, while the server executes `action` (display and execution are decoupled).
+
+### 1.6 默认起点表 / Default origin table (pattern_vector)
+
+步骤未显式给出 `origin` 且带有 `action` 时，演示页会从数据包 `data/hexguide/pattern_vector/` 读取该 action 的**默认起点**。
+
+When a step has an `action` but no explicit `origin`, the demo page reads the action's **default origin** from the datapack `data/hexguide/pattern_vector/`.
+
+**规则 / Rules:**
+
+- 目录下每个 `.json` 文件可记录**多个** action 的默认起点：
+  ```json
+  {
+    "hexcasting:get_caster": { "origin": [-1, 2] },
+    "hexcasting:raycast":     { "origin": [0, 0] }
+  }
+  ```
+- 多个文件按**文件名顺序**加载并合并，后加载覆盖先加载的**同名 action**（例如 `aaa.json` 与 `zzz.json` 都定义了 `hexcasting:get_caster`，以 `zzz.json` 为准）。
+- 文件可省略 `.json` 中任意条目；没有对应条目时回落到默认 `[-1, 2]`。
+
+Each `.json` file under the directory may hold defaults for **multiple** actions. Files are loaded in **filename order** and merged — a later file overrides the same action defined by an earlier one (e.g. if both `aaa.json` and `zzz.json` define `hexcasting:get_caster`, `zzz.json` wins). Missing entries fall back to `[-1, 2]`.
+
+**优先级 / Priority**：`origin` 显式 > `q`/`r` > `pattern_vector` 表 > 默认 `[-1, 2]`。
+
+示例 / Example: `data/hexguide/pattern_vector/example.json`
 
 ---
 

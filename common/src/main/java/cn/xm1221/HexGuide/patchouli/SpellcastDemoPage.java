@@ -190,6 +190,7 @@ public class SpellcastDemoPage extends BookPage {
         if (json == null || spellcasting == null) return;
         try {
             patternVector = parsePatternVector(patternVectorJson);
+            HexGuide.LOGGER.info("[DemoPush] pattern_vector 收到 {} 条: {}", patternVector.size(), patternVectorJson);
             steps = parseSteps(json);
             nextStep = 0;
             animTicks = 0;
@@ -197,7 +198,9 @@ public class SpellcastDemoPage extends BookPage {
             BookSpellcastingAccess access = as(spellcasting);
             access.setDemoEscapedColor$hexguide(escapedColor);
             access.resetDemoParenState$hexguide();
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            HexGuide.LOGGER.warn("[DemoPush] onSpellplayLoaded 异常", e);
+        }
     }
 
     /** 解析 pattern_vector.json（{"<action id>": {"origin": [q, r]}, ...}）→ action → [q, r] 映射 */

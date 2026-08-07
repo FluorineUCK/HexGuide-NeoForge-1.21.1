@@ -11,6 +11,10 @@
       "type": "hexguide:component_text",
       "text": "hexguide.page.guide.spells.lights.1"
     },
-    "hexguide.page.guide.spells.lights.2"
+    {
+      "type": "hexguide:spellcast_demo",
+      "demo": "hexguide:raycast",
+      "hex_size": 16
+    }
   ]
 }

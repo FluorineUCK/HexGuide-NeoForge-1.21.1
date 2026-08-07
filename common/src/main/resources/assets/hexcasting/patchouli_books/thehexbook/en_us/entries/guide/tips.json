@@ -10,14 +10,6 @@
     {
       "type": "hexguide:component_text",
       "text": "hexguide.page.guide.tips.1"
-    },
-    {
-      "type": "hexguide:component_text",
-      "text": "hexguide.page.guide.tips.2"
-    },
-    {
-      "type": "hexguide:component_text",
-      "text": "hexguide.page.guide.tips.3"
     }
   ]
 }
