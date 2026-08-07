@@ -6,6 +6,7 @@ import at.petrak.hexcasting.api.casting.getBool
 import at.petrak.hexcasting.api.casting.iota.Iota
 import at.petrak.hexcasting.api.casting.iota.IotaType
 import cn.xm1221.HexGuide.compat.inline.IotaInlineData
+import cn.xm1221.HexGuide.networking.msg.MsgIotaSyncS2C
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
@@ -39,6 +40,12 @@ class OpTextCopy: ConstMediaAction {
                 val saveMsg = Component.translatable("hexguide.copy.saved", ref)
                     .withStyle(Style.EMPTY.withClickEvent(ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ref)))
                 caster.sendSystemMessage(saveMsg)
+                // 同步：服务器把该 iota 广播给所有玩家（含施法者——施法者客户端也需要文件才能内联渲染）
+                // 各玩家客户端把同一 ref 保存到自己的 <gameDir>/hexguide/iotas/，之后 iota:<ref>.json 都能加载
+                val syncMsg = MsgIotaSyncS2C(savedRef, IotaType.serialize(iota))
+                for (p in caster.server.playerList.players) {
+                    syncMsg.sendToPlayer(p)
+                }
             }
         }
         return listOf()

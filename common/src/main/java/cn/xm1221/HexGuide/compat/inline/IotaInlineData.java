@@ -229,6 +229,19 @@ public class IotaInlineData implements InlineData<IotaInlineData> {
         return obj.toString();
     }
 
+    /**
+     * 按指定 ref 把 iota NBT 保存到 &lt;gameDir&gt;/&lt;ns&gt;/iotas/&lt;ref&gt;.json。
+     * 用于同步（MsgIotaSyncS2C）：所有玩家以同一 ref 保存，保证 iota:&lt;ref&gt;.json 在各端可加载。
+     */
+    public static void saveToGameDirRef(String ref, net.minecraft.nbt.CompoundTag iotaNbt) {
+        try {
+            Path dir = Platform.getGameFolder().resolve(HexGuide.MODID).resolve("iotas");
+            Files.createDirectories(dir);
+            String tagStr = iotaNbt.toString();
+            Files.writeString(dir.resolve(ref + ".json"), saveJson(tagStr));
+        } catch (Exception ignored) {}
+    }
+
     /** 序列化文本的 SHA-256 前 6 位十六进制 */
     private static String shortHash(String s) {
         try {
