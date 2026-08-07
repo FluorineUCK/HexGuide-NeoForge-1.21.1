@@ -33,5 +33,12 @@ fun HexGuideMessageS2C.applyOnClient(ctx: PacketContext) = ctx.queue {
                 HexGuideCreativeTab.setExcludedPatterns(ids.toSet())
             }
         }
+
+        // 笔记全量同步 → 更新客户端缓存（手册笔记页即热更新）
+        is MsgNotesSyncS2C -> {
+            Minecraft.getInstance().execute {
+                cn.xm1221.HexGuide.api.notes.ClientNotes.applySync(uuid, sections)
+            }
+        }
     }
 }

@@ -1,0 +1,778 @@
+{
+  "name": "hexguide.entry.notes",
+  "category": "hexcasting:guide",
+  "icon": "minecraft:book",
+  "sortnum": 60,
+  "advancement": "hexcasting:root",
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    },
+    {
+      "type": "hexguide:note_page"
+    }
+  ]
+}

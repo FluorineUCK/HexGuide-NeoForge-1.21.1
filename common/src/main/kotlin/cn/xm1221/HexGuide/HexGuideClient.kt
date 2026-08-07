@@ -29,6 +29,12 @@ object HexGuideClient {
         // hexguide:spellcast_demo —— 手册内演示图案绘制与栈变化
         ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation(HexGuide.MODID, "spellcast_demo")] =
             SpellcastDemoPage::class.java
+        // hexguide:note_page —— 笔记显示页（当前节第 N 个 NoteIota）
+        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation(HexGuide.MODID, "note_page")] =
+            cn.xm1221.HexGuide.patchouli.NotePage::class.java
+        // hexguide:note_index —— 笔记目录页（列出节并跳转）
+        ClientBookRegistry.INSTANCE.pageTypes[ResourceLocation(HexGuide.MODID, "note_index")] =
+            cn.xm1221.HexGuide.patchouli.NoteIndex::class.java
     }
 
     fun getConfigScreen(parent: Screen): Screen {

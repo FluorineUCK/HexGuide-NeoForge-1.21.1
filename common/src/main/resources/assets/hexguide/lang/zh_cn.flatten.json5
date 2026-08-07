@@ -1,4 +1,11 @@
 {
+  item: {
+    hexguide: {
+      amethyst_pen: "紫水晶笔",
+      note_scrap: "笔记残页",
+    },
+  },
+
   hexguide: {
     scrying: {
       open_book: "（按下 %s 在咒术笔记中查看更多信息）",
@@ -11,6 +18,22 @@
     copy: {
       hover: "点击以复制",
       saved: "已保存为 %s（点击复制）",
+    },
+
+    notes: {
+      unnamed: "未命名笔记",
+      new: "＋新建",
+      save: "保存",
+      cancel: "取消",
+      need_paper: "副手需要持有纸才能写笔记！",
+      need_more_paper: "副手纸不够！",
+      scrap_hint: "副手持此残页施放 note/import 可加入自己的笔记",
+      imported: "已导入笔记：%s",
+      title: "标题",
+      prev_page: "上一页",
+      next_page: "下一页",
+      page_indicator: "第 %s / %s 页",
+      editor_title: "笔记编辑器",
     },
 
     categories: {
@@ -47,6 +70,8 @@
         logics: "逻辑分支",
         continuation: "延续、跳转与伊里斯",
         tips: "关于避免事故",
+        notes_index: "玩家笔记",
+        notes: "我的笔记",
         spells: {
           blocks: "批量破坏方块",
           lights: "射线追踪技巧与照明术",
@@ -64,6 +89,9 @@
     page: {
       search: {
         "0": "下面是一个用于搜索《咒术笔记》内容和条目的文本框。只需输入名称或关键词即可找到相关条目。点击任意结果直接跳转到对应页面。",
+      },
+      notes_index: {
+        "0": "在这里你可以书写自己的笔记。每条笔记是一系列页面；点击上方列表中的某条笔记即可翻阅。笔记保存在服务器存档中，也可以作为 Iota 与其他玩家交换。",
       },
       guide: {
         spells: {

@@ -10,14 +10,20 @@ import at.petrak.hexcasting.api.mod.HexTags
 import at.petrak.hexcasting.common.lib.hex.HexActions
 import at.petrak.hexcasting.xplat.IXplatAbstractions
 import cn.xm1221.HexGuide.HexGuide
+import cn.xm1221.HexGuide.api.notes.NoteIota
+import cn.xm1221.HexGuide.api.notes.PlayerNotes
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import dev.architectury.networking.NetworkManager.PacketContext
 import cn.xm1221.HexGuide.networking.msg.*
+import cn.xm1221.HexGuide.registry.HexGuideItems
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.packs.PackType
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.item.ItemStack
 
 /**
  * 读取全局 pattern_vector 默认 origin 表：
@@ -133,6 +139,60 @@ fun HexGuideMessageC2S.applyOnServer(ctx: PacketContext) = ctx.queue {
             MsgExcludedPatternsS2C(excluded).sendToPlayer(player)
         }
 
+        // 追加 NoteIota 到某节末尾（编辑/导入）→ 回发全量
+        is MsgNotesAppendC2S -> {
+            val player = ctx.player as? ServerPlayer ?: return@queue
+            val notes = PlayerNotes.get(player.serverLevel())
+            val iota = NoteIota.TYPE.deserialize(iota, player.serverLevel())
+            if (iota != null) {
+                notes.appendIota(player.uuid, sectionIndex, iota)
+                syncNotes(player, notes)
+            }
+        }
+
+        // 新建一节（整节 = NoteIota 列表）→ 回发全量
+        is MsgNotesNewSectionC2S -> {
+            val player = ctx.player as? ServerPlayer ?: return@queue
+            val notes = PlayerNotes.get(player.serverLevel())
+            val iotas = iotas.mapNotNull { NoteIota.TYPE.deserialize(it, player.serverLevel()) }
+            notes.newSection(player.uuid, iotas)
+            syncNotes(player, notes)
+        }
+
+        // 紫水晶笔保存：每页消耗副手一张纸 → 生成"笔记残页"（携带该页 NoteIota）。
+        // 只产出物品，不写笔记库——条目只能通过 note/import 添加。
+        is MsgNotesSaveC2S -> {
+            val player = ctx.player as? ServerPlayer ?: return@queue
+            val off = player.offhandItem
+            if (!off.`is`(net.minecraft.world.item.Items.PAPER)) return@queue
+            if (pages.isEmpty()) return@queue
+            if (off.count < pages.size) {
+                player.displayClientMessage(Component.translatable("hexguide.notes.need_more_paper"), true)
+                return@queue
+            }
+            val now = System.currentTimeMillis()
+            for ((i, body) in pages.withIndex()) {
+                val iota = NoteIota(NoteIota.makeData(
+                    title = if (i == 0) title else "",
+                    body = body,
+                    author = player.gameProfile.name,
+                    id = java.util.UUID.randomUUID().toString(),
+                    time = now,
+                ))
+                // 副手一张纸 → 笔记残页（携带该页 NoteIota）
+                off.shrink(1)
+                val scrap = ItemStack(HexGuideItems.NOTE_SCRAP.value)
+                cn.xm1221.HexGuide.items.NoteScrapItem.setNote(scrap, iota)
+                if (!player.addItem(scrap)) player.drop(scrap, false)
+            }
+        }
+
         else -> {}
     }
+}
+
+/** 把某玩家的全部笔记下发到其客户端 */
+fun syncNotes(player: ServerPlayer, notes: PlayerNotes) {
+    val sections = notes.sections(player.uuid).map { sec -> sec.map { it.serialize() as CompoundTag } }
+    MsgNotesSyncS2C(player.uuid, sections).sendToPlayer(player)
 }

@@ -1,4 +1,11 @@
 {
+  item: {
+    hexguide: {
+      amethyst_pen: "Amethyst Pen",
+      note_scrap: "Note Scrap",
+    },
+  },
+
   hexguide: {
     scrying: {
       open_book: "(Press %s to open The HexBook)",
@@ -11,6 +18,22 @@
     copy: {
       hover: "Click to copy",
       saved: "Saved as %s (click to copy)",
+    },
+
+    notes: {
+      unnamed: "Untitled Note",
+      new: "+ New",
+      save: "Save",
+      cancel: "Cancel",
+      need_paper: "You need paper in your offhand to write notes!",
+      need_more_paper: "Not enough paper in your offhand!",
+      scrap_hint: "Cast note/import with this in your offhand to add it to your notes.",
+      imported: "Imported note: %s",
+      title: "Title",
+      prev_page: "<",
+      next_page: ">",
+      page_indicator: "Page %s / %s",
+      editor_title: "Note Editor",
     },
 
     categories: {
@@ -43,6 +66,8 @@
         meta: "Meta-Execution and the Mechanics of Casting",
         logics: "Logic Branching",
         demo: "Spellcasting Demo",
+        notes_index: "Player Notes",
+        notes: "My Notes",
       },
       casting: {
         hexguide: "About The HexBook",
@@ -52,6 +77,9 @@
     page: {
       search: {
         "0": "Below is a text search box for the contents and entries of The HexBook. Simply type in a name, keyword, or natural language description to find relevant entries. Click any result to jump directly to that page.",
+      },
+      notes_index: {
+        "0": "Here you can write your own notes. Each note is a list of pages; click a note in the list above to browse it. Notes are stored on your server save and can be exchanged with other players as Iotas.",
       },
       guide: {
         iotas: {
