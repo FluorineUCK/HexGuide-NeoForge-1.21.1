@@ -1,18 +1,19 @@
 package cn.xm1221.HexGuide.client.screen
 
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.font.TextFieldHelper
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
+import net.minecraft.resources.ResourceLocation
 import org.lwjgl.glfw.GLFW
 
 /**
- * 占位材质按钮：功能全部沿用原生 Button（点击/焦点/音效/叙述），
- * 仅覆写 renderWidget 不画原版材质——纯色矩形 + 边框 + 文字，材质留空方便 modpack 绘制替换。
+ * 占位材质按钮：功能全部沿用原生 Button（点击/焦点/音效/叙述）。
+ * 材质：hexguide:textures/gui/note_buttons.png（200×60，三态各 200×20：normal/hovered/disabled）。
+ * 纹理缺失时回退纯色占位。
  */
 class PlaceholderButton(
     x: Int, y: Int, w: Int, h: Int,
@@ -22,13 +23,24 @@ class PlaceholderButton(
 
     override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
         val font = Minecraft.getInstance().font
-        // 占位背景（纯色；不画原版按钮材质）
-        val bg = if (isHoveredOrFocused) 0xFF_555555.toInt() else 0xFF_3a3a3a.toInt()
-        graphics.fill(getX(), getY(), getX() + width, getY() + height, bg)
-        // 边框（纯色，可替换为材质）
-        graphics.renderOutline(getX(), getY(), width, height, 0xFF_999999.toInt())
+        val hasTex = Minecraft.getInstance().resourceManager.getResource(BTN_TEX).isPresent
+        if (hasTex) {
+            // 三态：normal y=0 / hovered y=20 / disabled y=40（200×20 每态，拉伸到按钮尺寸）
+            val v = if (!active) 40 else if (isHoveredOrFocused) 20 else 0
+            graphics.blit(BTN_TEX, getX(), getY(), 0f, v.toFloat(), width, height, 200, 60)
+        } else {
+            // 占位背景（纯色；不画原版按钮材质）
+            val bg = if (isHoveredOrFocused) 0xFF_555555.toInt() else 0xFF_3a3a3a.toInt()
+            graphics.fill(getX(), getY(), getX() + width, getY() + height, bg)
+            graphics.renderOutline(getX(), getY(), width, height, 0xFF_999999.toInt())
+        }
         // 文字（居中）
         graphics.drawCenteredString(font, message, getX() + width / 2, getY() + (height - 8) / 2, 0xFF_FFFFFF.toInt())
+    }
+
+    companion object {
+        /** 按钮纹理：assets/hexguide/textures/gui/note_buttons.png */
+        val BTN_TEX = ResourceLocation("hexguide", "textures/gui/note_buttons.png")
     }
 }
 
@@ -36,7 +48,7 @@ class PlaceholderButton(
  * 笔记编辑器（仿 MC 原版"书与笔" BookEditScreen）：
  * - 每页一段文本（TextFieldHelper 多行编辑：光标/选择/剪贴板/退格/方向键）
  * - 精确光标：getCursorPos() + 行/列定位（plainIndexAtWidth），光标常亮；点击文本区可按行列移动光标
- * - 正文用 uniform 字体（书与笔同款）+ 1.25× 放大渲染（视觉与咒术笔记书内文字接近）
+ * - 正文用默认字体（与书页同字宽，每行字符数一致）+ 1.25× 放大渲染（视觉与书内文字接近）
  * - 文本区水平居中；翻页/保存/取消用【占位材质按钮】（PlaceholderButton）
  * - 点击文本区外取消选中；回车换行（keyPressed + charTyped 双路）
  * - 背景材质【留空】（仅纯色占位矩形，方便 modpack 绘制替换）
@@ -52,9 +64,6 @@ class NoteEditorScreen(
     private var currPage: Int = 0
     private var titleBox: EditBox? = null
     private lateinit var helper: TextFieldHelper
-
-    /** uniform 字体（书与笔同款 fontFilterFishy，渲染正文用） */
-    private fun ufont(): Font = Minecraft.getInstance().fontFilterFishy
 
     /** 文本区水平居中 X（按视觉宽度） */
     private var editX: Int = 0
@@ -177,7 +186,7 @@ class NoteEditorScreen(
                 val text = pages[currPage]
                 val lines = wrapLines(text)
                 val lineText = lines.getOrNull(row) ?: ""
-                val col = ufont().splitter.plainIndexAtWidth(lineText, lx, Style.EMPTY)
+                val col = font.splitter.plainIndexAtWidth(lineText, lx, Style.EMPTY)
                 val pos = (rowToTextOffset(lines, row) + col).coerceAtMost(text.length)
                 helper.setCursorPos(pos)
                 helper.setSelectionPos(pos) // 取消选中
@@ -199,12 +208,17 @@ class NoteEditorScreen(
     // ---- 渲染 ----
 
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        renderBackground(graphics) // Screen 默认背景；书页材质【留空】——modpack 可自行绘制替换
+        // 背景：hexguide:textures/gui/note_editor.png（640×360，1:1 对应 GUI 逻辑坐标，拉伸到屏幕；缺失时回退默认背景）
+        if (Minecraft.getInstance().resourceManager.getResource(BG_TEX).isPresent) {
+            graphics.blit(BG_TEX, 0, 0, 0f, 0f, width, height, 640, 360)
+        } else {
+            renderBackground(graphics) // Screen 默认背景
+        }
         titleBox?.render(graphics, mouseX, mouseY, partialTicks)
         graphics.drawCenteredString(font, Component.translatable("hexguide.notes.title"), width / 2, 4, 0xFF777777.toInt())
 
-        // 文本区占位背景（视觉尺寸，纯色占位可替换为自定义材质）
-        graphics.fill(editX - 3, editY - 3, editX + editVW + 3, editY + editVH + 3, 0xFF_3a3a3a.toInt())
+        // 文本区占位背景（视觉尺寸；若背景纹理已画好文本区可自行删掉这层）
+        graphics.fill(editX - 3, editY - 3, editX + editVW + 3, editY + editVH + 3, 0x33_3a3a3a.toInt())
 
         val text = pages[currPage]
         val lines = wrapLines(text)
@@ -216,7 +230,7 @@ class NoteEditorScreen(
         graphics.pose().pushPose()
         graphics.pose().translate(editX.toFloat(), editY.toFloat(), 0f)
         graphics.pose().scale(SCALE, SCALE, 1f)
-        val uf = ufont()
+        val uf = font
         for (i in start until lines.size) {
             val y = (i - start) * LINE_HEIGHT
             graphics.drawString(uf, lines[i], 0, y, 0xFFE0E0E0.toInt(), false)
@@ -247,7 +261,7 @@ class NoteEditorScreen(
      *  以 \n 结尾时末尾补一个空行——否则光标定位（cursorToRowCol）无法落到"换行后的新行"行首。 */
     private fun wrapLines(text: String): List<String> {
         if (text.isEmpty()) return listOf("")
-        val splitter = ufont().splitter
+        val splitter = font.splitter
         val out = mutableListOf<String>()
         var remaining = text
         while (remaining.isNotEmpty()) {
@@ -286,6 +300,9 @@ class NoteEditorScreen(
     }
 
     companion object {
+        /** 背景纹理：assets/hexguide/textures/gui/note_editor.png（640×360，1:1 对应 GUI 逻辑坐标） */
+        val BG_TEX = ResourceLocation("hexguide", "textures/gui/note_editor.png")
+
         /** 正文放大倍数（视觉与咒术笔记书内文字接近） */
         const val SCALE = 1.25f
         const val MAX_LINES = 14
