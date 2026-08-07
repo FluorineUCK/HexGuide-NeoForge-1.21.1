@@ -29,8 +29,8 @@ private fun readPatternVector(player: ServerPlayer): String? {
         // 诊断：hexguide 命名空间全部资源（不过滤），确认 pattern_vector 是否在资源管理器里
         val all = rm.listResources(HexGuide.MODID) { true }.keys.map { it.path }
         HexGuide.LOGGER.info("[Spellplay] hexguide 命名空间全部资源({}): {}", all.size, all)
-        val direct = rm.getResource(ResourceLocation(HexGuide.MODID, "pattern_vector/a_hexguide.json"))
-        HexGuide.LOGGER.info("[Spellplay] 直接 getResource pattern_vector/a_hexguide.json: {}", direct.isPresent)
+        val direct = rm.getResource(ResourceLocation(HexGuide.MODID, "pattern_vector/hexguide.json"))
+        HexGuide.LOGGER.info("[Spellplay] 直接 getResource pattern_vector/hexguide.json: {}", direct.isPresent)
         val merged = JsonObject()
         val files = rm
             .listResources(HexGuide.MODID) { it.path.startsWith("pattern_vector/") && it.path.endsWith(".json") }
