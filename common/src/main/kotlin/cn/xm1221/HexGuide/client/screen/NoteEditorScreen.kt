@@ -1,6 +1,7 @@
 package cn.xm1221.HexGuide.client.screen
 
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.EditBox
@@ -11,7 +12,7 @@ import org.lwjgl.glfw.GLFW
 
 /**
  * 占位材质按钮：功能全部沿用原生 Button（点击/焦点/音效/叙述），
- * 仅覆写 renderWidget 不画原版材质——半透明矩形 + 边框 + 文字，材质留空方便 modpack 绘制替换。
+ * 仅覆写 renderWidget 不画原版材质——纯色矩形 + 边框 + 文字，材质留空方便 modpack 绘制替换。
  */
 class PlaceholderButton(
     x: Int, y: Int, w: Int, h: Int,
@@ -24,7 +25,7 @@ class PlaceholderButton(
         // 占位背景（纯色；不画原版按钮材质）
         val bg = if (isHoveredOrFocused) 0xFF_555555.toInt() else 0xFF_3a3a3a.toInt()
         graphics.fill(getX(), getY(), getX() + width, getY() + height, bg)
-        // 边框（占位，可替换为材质）
+        // 边框（纯色，可替换为材质）
         graphics.renderOutline(getX(), getY(), width, height, 0xFF_999999.toInt())
         // 文字（居中）
         graphics.drawCenteredString(font, message, getX() + width / 2, getY() + (height - 8) / 2, 0xFF_FFFFFF.toInt())
@@ -34,10 +35,11 @@ class PlaceholderButton(
 /**
  * 笔记编辑器（仿 MC 原版"书与笔" BookEditScreen）：
  * - 每页一段文本（TextFieldHelper 多行编辑：光标/选择/剪贴板/退格/方向键）
- * - 精确光标：getCursorPos() + 行/列定位（plainIndexAtWidth），渲染竖线闪烁；点击文本区可按行列移动光标
- * - 文本区水平居中；翻页/保存/取消用【占位材质按钮】（NoteButton，uniform 字体文字）
- * - 点击文本区外取消选中
- * - 背景材质【留空】（仅半透明占位矩形，方便 modpack 绘制替换）
+ * - 精确光标：getCursorPos() + 行/列定位（plainIndexAtWidth），光标常亮；点击文本区可按行列移动光标
+ * - 正文用 uniform 字体（书与笔同款）+ 1.25× 放大渲染（视觉与咒术笔记书内文字接近）
+ * - 文本区水平居中；翻页/保存/取消用【占位材质按钮】（PlaceholderButton）
+ * - 点击文本区外取消选中；回车换行（keyPressed + charTyped 双路）
+ * - 背景材质【留空】（仅纯色占位矩形，方便 modpack 绘制替换）
  */
 class NoteEditorScreen(
     private val playerName: String,
@@ -51,14 +53,21 @@ class NoteEditorScreen(
     private var titleBox: EditBox? = null
     private lateinit var helper: TextFieldHelper
 
-    /** 文本区水平居中 X（随窗口宽度动态） */
+    /** uniform 字体（书与笔同款 fontFilterFishy，渲染正文用） */
+    private fun ufont(): Font = Minecraft.getInstance().fontFilterFishy
+
+    /** 文本区水平居中 X（按视觉宽度） */
     private var editX: Int = 0
     private var editY: Int = 40
+
+    /** 文本区视觉尺寸（逻辑尺寸 × SCALE） */
+    private val editVW: Int get() = (EDIT_WIDTH * SCALE).toInt()
+    private val editVH: Int get() = (EDIT_HEIGHT * SCALE).toInt()
 
     override fun init() {
         if (pages.isEmpty()) pages.add("")
         if (currPage >= pages.size) currPage = pages.size - 1
-        editX = width / 2 - EDIT_WIDTH / 2
+        editX = width / 2 - editVW / 2
 
         // 标题（单行，居中；点击可聚焦输入）
         titleBox = EditBox(font, width / 2 - 70, 18, 140, 16, Component.translatable("hexguide.notes.title")).also {
@@ -77,9 +86,9 @@ class NoteEditorScreen(
         )
 
         // 按钮：文本区正下方（原生 Button 功能 + 占位材质）
-        val btnY = editY + EDIT_HEIGHT + 8
+        val btnY = editY + editVH + 8
         addRenderableWidget(PlaceholderButton(editX - 80, btnY, 60, 16, Component.translatable("hexguide.notes.prev_page"), Button.OnPress { prevPage() }))
-        addRenderableWidget(PlaceholderButton(editX + EDIT_WIDTH + 20, btnY, 60, 16, Component.translatable("hexguide.notes.next_page"), Button.OnPress { nextPage() }))
+        addRenderableWidget(PlaceholderButton(editX + editVW + 20, btnY, 60, 16, Component.translatable("hexguide.notes.next_page"), Button.OnPress { nextPage() }))
         addRenderableWidget(PlaceholderButton(width / 2 - 65, btnY + 22, 60, 16, Component.translatable("hexguide.notes.save"), Button.OnPress { saveAndClose() }))
         addRenderableWidget(PlaceholderButton(width / 2 + 5, btnY + 22, 60, 16, Component.translatable("hexguide.notes.cancel"), Button.OnPress { onClose() }))
     }
@@ -139,6 +148,11 @@ class NoteEditorScreen(
 
     override fun charTyped(code: Char, modifiers: Int): Boolean {
         if (getFocused() === titleBox) return super.charTyped(code, modifiers)
+        // 某些环境（输入法/特殊键盘）Enter 走 charTyped 而非 keyPressed —— 这里补上换行
+        if (code == '\n' || code == '\r') {
+            helper.insertText("\n")
+            return true
+        }
         if (helper.charTyped(code)) return true
         return super.charTyped(code, modifiers)
     }
@@ -154,15 +168,16 @@ class NoteEditorScreen(
                 setFocused(tb)
                 return true
             }
-            // 点击文本区：按 (行, 列) 精确移动光标
+            // 点击文本区：换算回逻辑坐标后按 (行, 列) 精确移动光标
             if (isInEditArea(mouseX, mouseY)) {
                 setFocused(null) // 键盘回到文本区
-                val row = ((mouseY - editY) / LINE_HEIGHT).toInt().coerceAtLeast(0)
+                val lx = ((mouseX - editX) / SCALE).toInt().coerceAtLeast(0)
+                val ly = ((mouseY - editY) / SCALE).toInt().coerceAtLeast(0)
+                val row = (ly / LINE_HEIGHT).toInt()
                 val text = pages[currPage]
                 val lines = wrapLines(text)
                 val lineText = lines.getOrNull(row) ?: ""
-                val clickX = (mouseX - editX).toInt().coerceAtLeast(0)
-                val col = font.splitter.plainIndexAtWidth(lineText, clickX, Style.EMPTY)
+                val col = ufont().splitter.plainIndexAtWidth(lineText, lx, Style.EMPTY)
                 val pos = (rowToTextOffset(lines, row) + col).coerceAtMost(text.length)
                 helper.setCursorPos(pos)
                 helper.setSelectionPos(pos) // 取消选中
@@ -176,8 +191,9 @@ class NoteEditorScreen(
         return super.mouseClicked(mouseX, mouseY, button)
     }
 
+    /** 文本区视觉区域判定 */
     private fun isInEditArea(mx: Double, my: Double): Boolean {
-        return mx >= editX && mx < editX + EDIT_WIDTH && my >= editY && my < editY + EDIT_HEIGHT
+        return mx >= editX && mx < editX + editVW && my >= editY && my < editY + editVH
     }
 
     // ---- 渲染 ----
@@ -187,33 +203,39 @@ class NoteEditorScreen(
         titleBox?.render(graphics, mouseX, mouseY, partialTicks)
         graphics.drawCenteredString(font, Component.translatable("hexguide.notes.title"), width / 2, 4, 0xFF777777.toInt())
 
-        // 文本区占位背景（纯色占位，可替换为自定义材质）
-        graphics.fill(editX - 3, editY - 3, editX + EDIT_WIDTH + 3, editY + EDIT_HEIGHT + 3, 0xFF_3a3a3a.toInt())
+        // 文本区占位背景（视觉尺寸，纯色占位可替换为自定义材质）
+        graphics.fill(editX - 3, editY - 3, editX + editVW + 3, editY + editVH + 3, 0xFF_3a3a3a.toInt())
 
         val text = pages[currPage]
         val lines = wrapLines(text)
 
         // 每页最多 MAX_LINES 行，超出滚动（显示最后 MAX_LINES 行）
         val start = (lines.size - MAX_LINES).coerceAtLeast(0)
-        for (i in start until lines.size) {
-            val y = editY + (i - start) * LINE_HEIGHT
-            graphics.drawString(font, lines[i], editX, y, 0xFFE0E0E0.toInt(), false)
-        }
 
-        // 光标（常亮，不闪烁——选中文本输入时立刻可见）
+        // 正文 + 光标：uniform 字体 + SCALE 放大渲染（逻辑坐标绘制，整体放大）
+        graphics.pose().pushPose()
+        graphics.pose().translate(editX.toFloat(), editY.toFloat(), 0f)
+        graphics.pose().scale(SCALE, SCALE, 1f)
+        val uf = ufont()
+        for (i in start until lines.size) {
+            val y = (i - start) * LINE_HEIGHT
+            graphics.drawString(uf, lines[i], 0, y, 0xFFE0E0E0.toInt(), false)
+        }
+        // 光标（常亮）
         val cursor = helper.getCursorPos().coerceIn(0, text.length)
         val (row, col) = cursorToRowCol(lines, cursor)
         val visRow = row - start
         if (visRow in 0 until MAX_LINES) {
             val lineText = lines.getOrNull(row) ?: ""
-            val caretX = editX + font.width(lineText.substring(0, col.coerceIn(0, lineText.length)))
-            val caretY = editY + visRow * LINE_HEIGHT
+            val caretX = uf.width(lineText.substring(0, col.coerceIn(0, lineText.length)))
+            val caretY = visRow * LINE_HEIGHT
             graphics.fill(caretX, caretY, caretX + 1, caretY + LINE_HEIGHT, 0xFFFFFFFF.toInt())
         }
+        graphics.pose().popPose()
 
         // 页码（文本区下方，居中）
         val pageText = Component.translatable("hexguide.notes.page_indicator", currPage + 1, pages.size).string
-        graphics.drawString(font, pageText, width / 2 - font.width(pageText) / 2, editY + EDIT_HEIGHT + 46, 0xFF777777.toInt(), false)
+        graphics.drawString(font, pageText, width / 2 - font.width(pageText) / 2, editY + editVH + 46, 0xFF777777.toInt(), false)
 
         // 关键：渲染 renderables（占位按钮等）——不调 super 则按钮不显示
         super.render(graphics, mouseX, mouseY, partialTicks)
@@ -221,17 +243,24 @@ class NoteEditorScreen(
 
     // ---- 行拆分与光标定位 ----
 
-    /** 按宽度 + 换行符拆行（与渲染/光标同一套逻辑），返回每行文本 */
+    /** 按宽度 + 换行符拆行（与渲染/光标同一套逻辑，宽度用 uniform 字体），返回每行文本。
+     *  以 \n 结尾时末尾补一个空行——否则光标定位（cursorToRowCol）无法落到"换行后的新行"行首。 */
     private fun wrapLines(text: String): List<String> {
         if (text.isEmpty()) return listOf("")
+        val splitter = ufont().splitter
         val out = mutableListOf<String>()
         var remaining = text
         while (remaining.isNotEmpty()) {
             val nl = remaining.indexOf('\n')
-            val limit = font.splitter.plainIndexAtWidth(remaining, EDIT_WIDTH, Style.EMPTY)
+            val limit = splitter.plainIndexAtWidth(remaining, EDIT_WIDTH, Style.EMPTY)
             val end = if (nl in 0 until limit) nl else limit.coerceAtMost(remaining.length)
             out.add(remaining.substring(0, end))
-            remaining = remaining.substring(if (nl in 0 until limit) end + 1 else end)
+            val consumed = if (nl in 0 until limit) end + 1 else end
+            remaining = remaining.substring(consumed)
+            // 已处理完且原文本以换行符结尾 → 追加空行（Enter 后光标停在新行行首）
+            if (remaining.isEmpty() && consumed > 0 && text.endsWith('\n')) {
+                out.add("")
+            }
         }
         return out
     }
@@ -257,9 +286,12 @@ class NoteEditorScreen(
     }
 
     companion object {
+        /** 正文放大倍数（视觉与咒术笔记书内文字接近） */
+        const val SCALE = 1.25f
         const val MAX_LINES = 14
         const val LINE_HEIGHT = 9
-        const val EDIT_WIDTH = 150
+        /** 逻辑宽度 = 书页宽（GuiBook.PAGE_WIDTH=116）——编辑器每行与书页等宽，所见即所得 */
+        const val EDIT_WIDTH = 116
         const val EDIT_HEIGHT = MAX_LINES * LINE_HEIGHT
     }
 }

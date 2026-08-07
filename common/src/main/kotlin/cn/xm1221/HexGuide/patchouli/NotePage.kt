@@ -32,7 +32,9 @@ class NotePage : BookPage() {
         val note = ClientNotes.page(pageNum) // pageNum 0-based
         currentNote = note
         textRender = if (note != null) {
-            BookTextRenderer(parent, Component.literal(note.body), 0, TEXT_Y, GuiBook.PAGE_WIDTH, 9, BODY_COLOR)
+            // 编辑器里的换行符 \n → Patchouli 换行码 $(br)（BookTextRenderer 的裸 \n 渲染不正常）
+            val body = note.body.replace("\n", "$(br)")
+            BookTextRenderer(parent, Component.literal(body), 0, TEXT_Y, GuiBook.PAGE_WIDTH, 9, BODY_COLOR)
         } else null
     }
 
