@@ -1,0 +1,20 @@
+{
+  "name": "hexguide.entry.guide.mods.hexal",
+  "category": "hexcasting:guide/mods",
+  "icon": "minecraft:feather",
+  "sortnum": 3,
+  "flag": "mod:hexal",
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.guide.mods.hexal.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.hexal.1"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.hexal.2"
+    }
+  ]
+}

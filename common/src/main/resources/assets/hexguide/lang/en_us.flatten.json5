@@ -74,6 +74,10 @@
         demo: "Spellcasting Demo",
         notes_index: "Player Notes",
         notes: "My Notes",
+        mods: {
+          hexal: "",
+        },
+
       },
       casting: {
         hexguide: "About The HexBook",
@@ -98,6 +102,13 @@
         "0": "Here you can write your own notes. Each note is a list of pages; click a note in the list above to browse it. Notes are stored on your server save and can be exchanged with other players as Iotas.",
       },
       guide: {
+        mods: {
+          hexal: {
+            "0": "",
+            "1": "",
+            "2": "",
+          },
+        },
         iotas: {
           "0": "Hex Casting is a craft that uses $(media)media/$ to manipulate Iotas, and through them the world itself, rewriting reality. Iotas are the \"names\" of all things; we use patterns to obtain Iotas, change their types, compute with them, or execute them — all to draw the information (Iotas) we want from Nature. Then we feed that information to patterns in the right form to achieve the effect we desire. Many patterns combined can create spells as powerful as works of art.",
           "1": "There are many kinds of Iotas: vectors iota:hexguide:vec0.json, numbers iota:double0.json, entities, patterns, booleans iota:bool0.json, and lists iota:list0.json, among others. Different types carry different meanings: a vector Iota usually represents a position, direction, or velocity; a number Iota is just a number. Most special of all is the Pattern Iota — it stands for a pattern that might itself be cast — and a list of patterns usually means a whole spell made of meaningful patterns. For example iota:list0.json",

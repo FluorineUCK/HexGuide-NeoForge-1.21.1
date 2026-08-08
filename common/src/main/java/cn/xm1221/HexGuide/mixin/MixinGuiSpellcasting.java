@@ -230,8 +230,11 @@ public abstract class MixinGuiSpellcasting implements BookSpellcastingAccess {
      * WIP 图案的 seed = patterns.size()，不在覆盖表内，不受影响。
      */
     @WrapOperation(
-        // render 是 override Screen.render：Mojmap 环境为 render，Connector/SRG（Fabric HexMod 转换）为 m_88315_
-        method = {"render", "m_88315_"},
+        // render 是 override Screen.render：
+        // - 开发/Forge mojmap：render
+        // - Forge 发布（SRG）：m_88315_
+        // - Fabric 发布（HexMod jar 是 intermediary）：method_25394
+        method = {"render", "m_88315_", "method_25394"},
         at = @At(value = "INVOKE",
             target = "Lat/petrak/hexcasting/client/render/RenderLib;drawPatternFromPoints(Lorg/joml/Matrix4f;Ljava/util/List;Ljava/util/Set;ZIIFFFD)V",
             remap = false),

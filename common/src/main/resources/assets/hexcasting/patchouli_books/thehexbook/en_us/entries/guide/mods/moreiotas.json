@@ -1,0 +1,20 @@
+{
+  "name": "hexguide.entry.guide.mods.moreiotas",
+  "category": "hexcasting:guide/mods",
+  "icon": "minecraft:obsidian",
+  "sortnum": 0,
+  "flag": "mod:moreiotas",
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.guide.mods.moreiotas.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.moreiotas.1"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.moreiotas.2"
+    }
+  ]
+}
