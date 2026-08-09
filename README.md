@@ -38,6 +38,9 @@ Hex Guide addon for Hex Casting
 
 ### 其他 / Other
 
+- **玩家笔记 / Player notes**：手册新增「玩家笔记」分类——用**紫水晶笔**（副手持纸右键，合成：羽毛 + 任意法杖 `#hexcasting:staves` + 紫水晶粉）打开书与笔风格的笔记编辑器；保存时每页消耗一张纸，生成携带 NoteIota 的**笔记残页**（实现 `IotaHolderItem`，可被 Hex 读/写法术读写）；残页交给其他玩家，用 `note/import` 法术即可导入对方的笔记库。另有 `note/list`（取所有笔记）、`note/get`（按索引取一节）、`note/delete`（按索引删除）等图案。
+  A new "Player Notes" category in TheHexBook: use the **Amethyst Pen** (shapeless: feather + any staff `#hexcasting:staves` + amethyst dust; right-click with paper in the offhand) to open a book-and-quill style editor; saving consumes one paper per page and produces a **Note Scrap** holding a NoteIota (implements `IotaHolderItem`, readable/writable by Hex Iota spells). Hand a scrap to another player and cast `note/import` to add it to their library; `note/list` / `note/get` / `note/delete` manage your notes.
+
 - **笔记指令 / Note commands**：`/hexguide export <索引>` 把第 <索引> 节笔记导出为 JSON（按首页标题命名、格式化换行，存入 `<gameDir>/hexguide/notes/`）；`/hexguide import <文件名>` 从文件导入笔记（文件名支持 Tab 联想）；`/hexguide authority <玩家> <true|false>` 单独配置某玩家的导出/导入权限（**默认开**，OP 2 级指令）。
   `/hexguide export <index>` exports a note section as pretty-printed JSON (named after its first page's title, saved to `<gameDir>/hexguide/notes/`); `/hexguide import <file>` imports notes from a file (filename Tab-completion); `/hexguide authority <player> <true|false>` grants/revokes a player's export/import permission (**on by default**, OP level 2).
 
