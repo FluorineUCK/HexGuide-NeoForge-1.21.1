@@ -38,6 +38,9 @@ Hex Guide addon for Hex Casting
 
 ### 其他 / Other
 
+- **笔记指令 / Note commands**：`/hexguide export <索引>` 把第 <索引> 节笔记导出为 JSON（按首页标题命名、格式化换行，存入 `<gameDir>/hexguide/notes/`）；`/hexguide import <文件名>` 从文件导入笔记（文件名支持 Tab 联想）；`/hexguide authority <玩家> <true|false>` 单独配置某玩家的导出/导入权限（**默认开**，OP 2 级指令）。
+  `/hexguide export <index>` exports a note section as pretty-printed JSON (named after its first page's title, saved to `<gameDir>/hexguide/notes/`); `/hexguide import <file>` imports notes from a file (filename Tab-completion); `/hexguide authority <player> <true|false>` grants/revokes a player's export/import permission (**on by default**, OP level 2).
+
 - **探知 / Scrying**：佩戴探知透镜（SCRY_SIGHT > 0）时查看石板/卷轴上的图案提示，按快捷键（默认 R）打开咒术笔记对应页。
   With a scrying lens (SCRY_SIGHT > 0), shows pattern hints for slates and wall scrolls; press the hotkey (default R) to open TheHexBook at the matching page.
 
