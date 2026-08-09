@@ -73,15 +73,18 @@ The client requests the config from the server (which reads the datapack), so **
 | 类型 type | 作用 / Behavior |
 |---|---|
 | `execute`（默认） | 绘制图案（默认**执行蓝**）→ 把本地 CastingImage **上传服务端**运行（新 VM，**不碰玩家法杖栈**）→ 结果传回 → 本地栈 = 结果。失败（ERRORED）时图案染红 |
-| `push` | 绘制图案 → 把**配置的自定义 Iota** 压入本地栈（纯本地） |
+| `push` | 绘制图案 → 把**配置的自定义 Iota** 压入本地栈（纯本地，不理会括号/转义） |
+| `push_in` | 绘制图案（可选）→ 把自定义 Iota **上传服务端按原版逻辑压入**：`escapeNext`（刚考察过）→ **转义**（进括号列表或压栈，消耗转义，染转义色）；括号内 → **进括号列表**；无转义无括号时压普通 Iota → 按原版丢 `MishapUnescapedValue`（要纯压栈请用 `push`） |
 | `clear` | **清空画布（只清网格，不清栈）**，可作为序列中间的一步 |
 | `peek` | **移除本地栈指定位置的 Iota**（栈顶为下标 0），支持单个或多个，越界忽略 |
+
+> `push_in`（English): draws an optional pattern, then uploads the Iota to the server and pushes it via the **vanilla** logic: right after an `escape` it becomes **escaped** (into the paren list or onto the stack, consuming the escape, tinted the escape color); inside parentheses it joins the **paren list**; otherwise pushing an ordinary (non-pattern) Iota throws the vanilla `MishapUnescapedValue` — use `push` for a plain local stack push.
 
 ### 1.5 每步字段 / Per-step fields
 
 | 字段 | 说明 / Description |
 |---|---|
-| `type` | 步骤类型（execute/push/clear/peek） |
+| `type` | 步骤类型（execute/push/push_in/clear/peek） |
 | `pattern` | 图案**笔顺**（角度字符，如 `"aqw"`）——**网格显示**优先 |
 | `action` | 已注册图案 id（如 `"hexcasting:get_caster"`）——**服务端执行**优先 |
 | `start_dir` | 该步的起始朝向（如 `"EAST"`），默认取全局 |
