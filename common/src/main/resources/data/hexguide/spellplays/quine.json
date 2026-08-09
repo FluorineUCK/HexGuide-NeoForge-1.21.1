@@ -1,0 +1,67 @@
+{
+  "interval": 30,
+  "clear_before": true,
+  "start_dir": "NORTH_EAST",
+  "steps": [
+    {
+      "type": "execute",
+      "pattern": "qqq",
+      "start_dir": "WEST",
+      "orgin": [0,0]
+    },
+    {
+      "type": "execute",
+      "pattern": "qqq",
+      "start_dir": "WEST",
+      "orgin": [0,0]
+    },
+    {
+      "type": "execute",
+      "pattern": "",
+      "start_dir": "EAST",
+      "orgin": [0,0]
+    },
+    {
+      "type": "execute",
+      "pattern": "eee",
+      "start_dir": "EAST",
+      "orgin": [0,0]
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:splat"
+    },
+    {
+      "type": "execute",
+      "pattern": "aqaaw",
+      "start_dir": "SOUTH_EAST"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:over"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:replace"
+    },
+    {
+      "type": "execute",
+      "pattern": "eee",
+      "start_dir": "EAST",
+      "orgin": [0,0]
+    },
+    {
+      "type": "execute",
+      "pattern": "aqaaw",
+      "start_dir": "SOUTH_EAST"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:over"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:replace"
+    }
+  ]
+}

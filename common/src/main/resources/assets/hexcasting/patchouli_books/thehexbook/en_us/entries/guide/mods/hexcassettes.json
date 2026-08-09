@@ -1,0 +1,33 @@
+{
+  "name": "hexguide.entry.guide.mods.hexcassettes",
+  "category": "hexcasting:guide/mods",
+  "icon": "hexcassettes:cassette",
+  "sortnum": 3,
+  "flag": "mod:hexcassettes",
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.guide.mods.hexcassettes.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.hexcassettes.1"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.hexcassettes.2"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.hexcassettes.3"
+    },
+    {
+      "type": "hexguide:spellcast_demo",
+      "demo": "hexguide:quines",
+      "hex_size": 16
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.mods.hexcassettes.4"
+    }
+  ]
+}

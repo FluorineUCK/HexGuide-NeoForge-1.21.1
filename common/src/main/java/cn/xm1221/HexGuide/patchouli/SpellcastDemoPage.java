@@ -18,6 +18,7 @@ import cn.xm1221.HexGuide.HexGuide;
 import cn.xm1221.HexGuide.compat.inline.IotaInlineData;
 import cn.xm1221.HexGuide.networking.msg.MsgBookExecDemoC2S;
 import cn.xm1221.HexGuide.networking.msg.MsgBookLoadSpellplayC2S;
+import cn.xm1221.HexGuide.networking.msg.MsgBookPushIotaC2S;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -511,6 +512,7 @@ public class SpellcastDemoPage extends BookPage {
 
         switch (step.type) {
             case "push" -> doPush(access, step);
+            case "push_in" -> doPushIn(access, step);
             case "clear" -> doClear(access, step);
             case "peek" -> doPeek(access, step);
             default -> doExecute(access, step);
@@ -567,6 +569,25 @@ public class SpellcastDemoPage extends BookPage {
         if (step.pushIota != null) {
             access.demoPushIota$hexguide(step.pushIota);
             playSound(HexSounds.CAST_NORMAL);
+        }
+    }
+
+    /**
+     * push_in：与 push 相同绘制图案，但入栈走服务端原版逻辑——
+     * 上传本地 CastingImage 与 iota，由 CastingVM 按当前括号/转义状态处理：
+     * escapeNext → 转义（进括号列表或压栈）；parenCount>0 → 进括号；否则压主栈。
+     */
+    private void doPushIn(BookSpellcastingAccess access, Step step) {
+        if (!step.sig.isEmpty() || !step.action.isEmpty()) {
+            try {
+                HexPattern pat = resolveDisplayPattern(step);
+                addPatternToGrid(access, step, pat);
+                playSound(HexSounds.START_PATTERN);
+            } catch (Exception ignored) {}
+        }
+        if (step.pushIota != null) {
+            CompoundTag image = access.demoGetImageNbt$hexguide();
+            new MsgBookPushIotaC2S(step.pushIota, image).sendToServer();
         }
     }
 

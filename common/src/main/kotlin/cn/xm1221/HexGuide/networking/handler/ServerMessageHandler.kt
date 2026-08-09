@@ -104,6 +104,27 @@ fun HexGuideMessageC2S.applyOnServer(ctx: PacketContext) = ctx.queue {
                 .sendToPlayer(player)
         }
 
+        // push_in：把指定 iota 交给服务端按原版逻辑执行（escapeNext → 转义；parenCount>0 → 进括号；否则压主栈）
+        is MsgBookPushIotaC2S -> {
+            val player = ctx.player as? ServerPlayer ?: return@queue
+            val world = player.serverLevel()
+            val image = try {
+                CastingImage.loadFromNbt(image, world)
+            } catch (e: Exception) {
+                CastingImage()
+            }
+            val iota = try {
+                IotaType.deserialize(iotaNbt, world) ?: return@queue
+            } catch (e: Exception) {
+                return@queue
+            }
+            val env = DemoCastEnv(player, InteractionHand.MAIN_HAND)
+            val vm = CastingVM(image, env)
+            val result = vm.queueExecuteAndWrapIota(iota, world)
+            MsgBookExecDemoS2C(vm.image.serializeToNbt(), result.resolutionType.name)
+                .sendToPlayer(player)
+        }
+
         // 读取演示配置 data/<ns>/spellplays/<name>.json + 全局 pattern_vector（默认 origin 表）并传回客户端
         is MsgBookLoadSpellplayC2S -> {
             val player = ctx.player as? ServerPlayer ?: return@queue

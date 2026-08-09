@@ -1,0 +1,95 @@
+{
+  "interval": 30,
+  "clear_before": true,
+  "start_dir": "NORTH_EAST",
+  "steps": [
+    {
+      "type": "execute",
+      "pattern": "qqq",
+      "start_dir": "WEST"
+    },
+    {
+      "type": "execute",
+      "pattern": "qqq",
+      "start_dir": "WEST"
+    },
+    {
+      "type": "execute",
+      "pattern": "qqq",
+      "start_dir": "WEST"
+    },
+    {
+      "type": "execute",
+      "pattern": "eee",
+      "start_dir": "EAST"
+    },
+    {
+      "type": "execute",
+      "pattern": "eee",
+      "start_dir": "EAST"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:splat"
+    },
+    {
+      "type": "execute",
+      "pattern": "aaeaa",
+      "start_dir": "NORTH_EAST"
+    },
+    {
+      "type": "execute",
+      "pattern": "aaeaa",
+      "start_dir": "NORTH_EAST"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:construct"
+    },
+    {
+      "type": "execute",
+      "pattern": "aawdd",
+      "start_dir": "NORTH_WEST"
+    },
+    {
+      "type": "execute",
+      "pattern": "edqde",
+      "start_dir": "SOUTH_EAST"
+    },
+    {
+      "type": "execute",
+      "pattern": "qqq",
+      "start_dir": "WEST"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:duplicate"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:eval"
+    },
+    {
+      "type": "execute",
+      "pattern": "eee",
+      "start_dir": "EAST"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:add"
+    },
+    {
+      "type": "execute",
+      "pattern": "eee",
+      "start_dir": "EAST"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:duplicate"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:eval"
+    }
+  ]
+}

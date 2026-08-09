@@ -1,0 +1,44 @@
+{
+  "interval": 30,
+  "clear_before": true,
+  "start_dir": "NORTH_EAST",
+  "steps": [
+    {
+      "type": "execute",
+      "pattern": "qqq",
+      "start_dir": "WEST",
+      "origin":[0,0]
+    },
+    {
+      "type": "push_in",
+      "push": "iota:Gau1g_$\\%5&-U?O\\nc+7JtM)LaC7LGPYdN+khhk>;gT,9*XCi4N!IY<4N$J.7:Vd)qHcN&/@\"Ek,a50O!:HM*h#sdWL7J0Cg#42j?:(X4^s!!m;9=-V@]%%uIV,iB9cnF1p%l\"T6&*af^jTlC->KE^]jNVHraUmZ)e/0R^^&qXb(p",
+      "title": "hexguide.demo.quines.0"
+    },
+    {
+      "type": "execute",
+      "pattern": "eee",
+      "start_dir": "EAST",
+      "origin":[0,0]
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:splat",
+      "title": "hexguide.demo.quines.0"
+    },
+    {
+      "type": "execute",
+      "pattern": "aqaaw",
+      "start_dir": "SOUTH_EAST",
+      "title": ""
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:over"
+    },
+    {
+      "type": "execute",
+      "action": "hexcasting:replace",
+      "title": "hexguide.demo.quines.1"
+    }
+  ]
+}
