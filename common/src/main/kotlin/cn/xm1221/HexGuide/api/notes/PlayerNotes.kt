@@ -16,6 +16,18 @@ class PlayerNotes : SavedData() {
     /** 玩家 → 节的列表；每节 = NoteIota 列表 */
     private val notes: MutableMap<UUID, MutableList<MutableList<NoteIota>>> = mutableMapOf()
 
+    /** 玩家 → export/import 指令权限（缺省 = 允许，默认开） */
+    private val authority: MutableMap<UUID, Boolean> = mutableMapOf()
+
+    /** 设置某玩家 export/import 指令权限 */
+    fun setAuthority(uuid: UUID, allowed: Boolean) {
+        authority[uuid] = allowed
+        setDirty()
+    }
+
+    /** 某玩家是否允许 export/import（默认开） */
+    fun isAllowed(uuid: UUID): Boolean = authority[uuid] ?: true
+
     /** 获取某玩家的所有节（空则建空列表） */
     fun sections(uuid: UUID): MutableList<MutableList<NoteIota>> =
         notes.getOrPut(uuid) { mutableListOf() }
@@ -54,11 +66,22 @@ class PlayerNotes : SavedData() {
             players.add(p)
         }
         tag.put("players", players)
+
+        // 权限表
+        val authTag = ListTag()
+        for ((uuid, allowed) in authority) {
+            val a = CompoundTag()
+            a.putUUID("uuid", uuid)
+            a.putBoolean("allowed", allowed)
+            authTag.add(a)
+        }
+        tag.put("authority", authTag)
         return tag
     }
 
     private fun readFrom(tag: CompoundTag) {
         notes.clear()
+        authority.clear()
         val players = tag.getList("players", Tag.TAG_COMPOUND.toInt())
         for (i in 0 until players.size) {
             val p = players.getCompound(i)
@@ -76,6 +99,13 @@ class PlayerNotes : SavedData() {
                 secs.add(sec)
             }
             notes[uuid] = secs
+        }
+
+        // 权限表
+        val authTag = tag.getList("authority", Tag.TAG_COMPOUND.toInt())
+        for (i in 0 until authTag.size) {
+            val a = authTag.getCompound(i)
+            authority[a.getUUID("uuid")] = a.getBoolean("allowed")
         }
     }
 

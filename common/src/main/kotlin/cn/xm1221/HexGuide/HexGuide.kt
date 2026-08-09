@@ -33,6 +33,7 @@ object HexGuide {
         HexGuideNetworking.init()
         InlineHexGuide.init()
         HexGuideTagFixer.init() // 互联时把 Fabric 路径的 hexcasting:action tag 补全
+        cn.xm1221.HexGuide.commands.HexGuideCommands.register() // /hexguide export/import/authority
         // 玩家进服时下发其笔记（手册笔记页）
         PlayerEvent.PLAYER_JOIN.register { player ->
             val notes = cn.xm1221.HexGuide.api.notes.PlayerNotes.get(player.serverLevel())
