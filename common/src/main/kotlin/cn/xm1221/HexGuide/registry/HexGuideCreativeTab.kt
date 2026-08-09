@@ -52,16 +52,20 @@ object HexGuideCreativeTab : HexGuideRegistrar<CreativeModeTab>(
             .icon { ItemStack(HexBlocks.SLATE.asItem()) }
             .displayItems { _, output ->
                 val entries = getActionEntries()
-                // 先加石板
+                // 先加石板（按图案签名去重——注册表可能存在同图案的 action，重复 add 会崩 "same item stack twice"）
+                val seenSlate = HashSet<String>()
                 for (info in entries) {
+                    if (!seenSlate.add(info.entry.prototype().anglesSignature())) continue
                     val name = Component.translatable(info.actionName).string
                     val slate = ItemStack(HexItems.SLATE)
                     writePatternToSlate(slate, info.entry.prototype())
                     slate.setHoverName(Component.translatable("tab.hexguide.slate_name", name))
                     output.accept(slate)
                 }
-                // 再加卷轴
+                // 再加卷轴（同样去重）
+                val seenScroll = HashSet<String>()
                 for (info in entries) {
+                    if (!seenScroll.add(info.entry.prototype().anglesSignature())) continue
                     val name = Component.translatable(info.actionName).string
                     val scroll = ItemStack(HexItems.SCROLL_LARGE)
                     writePatternToScroll(scroll, info.entry.prototype())
