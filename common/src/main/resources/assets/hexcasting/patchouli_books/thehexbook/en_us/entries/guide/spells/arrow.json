@@ -1,0 +1,20 @@
+{
+  "name": "hexguide.entry.guide.spells.arrow",
+  "category": "hexcasting:guide/spells",
+  "icon": "minecraft:bow",
+  "sortnum": 2,
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    "hexguide.page.guide.spells.arrow.0",
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.spells.arrow.1"
+    },
+
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.spells.arrow.2"
+    }
+  ]
+}
