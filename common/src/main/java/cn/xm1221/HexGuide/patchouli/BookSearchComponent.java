@@ -115,7 +115,9 @@ public class BookSearchComponent implements ICustomComponent {
         int ly = y + LIST_Y;
         for (int i = scrollOff; i < total && i < scrollOff + MAX_ROWS; i++) {
             if (c.isAreaHovered((int) mx, (int) my, x, ly, W, ROW_H)) {
-                c.navigateToEntry(filtered.get(i).eid(), filtered.get(i).page(), false); return true;
+                // navigateToEntry 的 page 参数是 spread（跨页索引），不是页索引：
+                // 左页 = spread*2，右页 = spread*2+1 → 页索引 pi 对应 spread = pi/2
+                c.navigateToEntry(filtered.get(i).eid(), filtered.get(i).page() / 2, false); return true;
             } ly += ROW_H;
         }
         int ny = y + PAGE_H - NAV_H;

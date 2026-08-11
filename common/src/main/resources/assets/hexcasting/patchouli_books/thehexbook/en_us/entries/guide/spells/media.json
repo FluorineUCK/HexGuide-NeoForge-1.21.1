@@ -1,0 +1,18 @@
+{
+  "name": "hexguide.entry.guide.spells.media",
+  "category": "hexcasting:guide/spells",
+  "icon": "hexcasting:amethyst_dust",
+  "sortnum": 0,
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.spells.media.0"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.spells.media.1"
+    }
+  ]
+}
