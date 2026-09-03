@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "cn.xm1221.HexGuide.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "MixinGuiSpellcasting",
+    "MixinMsgNewSpellPatternS2C"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

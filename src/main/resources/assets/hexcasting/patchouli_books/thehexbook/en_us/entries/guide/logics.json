@@ -1,0 +1,24 @@
+{
+  "name": "hexguide.entry.guide.logics",
+  "category": "hexcasting:guide",
+  "icon": "minecraft:ender_eye",
+  "sortnum": 3,
+  "advancement": "hexcasting:root",
+  "read_by_default": false,
+  "pages": [
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.logics.0"
+    },
+    {
+      "type": "hexguide:component_text",
+      "text": "hexguide.page.guide.logics.1"
+    },
+    {
+      "type": "hexguide:spellcast_demo",
+      "anchor": "play",
+      "demo": "hexguide:logics",
+      "hex_size": 16
+    }
+  ]
+}

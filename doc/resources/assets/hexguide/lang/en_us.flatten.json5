@@ -1,8 +1,0 @@
-{
-  hexdoc: {
-    hexguide: {
-      title: "Hex Guide Book",
-      description: "Hex Guide addon for Hex Casting",
-    },
-  }
-}

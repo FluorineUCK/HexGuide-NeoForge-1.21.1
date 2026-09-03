@@ -50,9 +50,9 @@ Hex Guide addon for Hex Casting
 - **创造模式标签页 / Creative tab**：包含所有已注册图案的石板与大型卷轴（排除卓越法术与每世界图案），按图案本地化名命名（「XX之石板 / XX之卷轴」）。
   A creative tab with slates and large scrolls for every registered pattern (excluding great spells and per-world patterns), named by localized pattern names.
 
-- **互联 Tag 修复 / Interop Tag Fix**：Fabric 与 Forge 的 `hexcasting:action` tag 数据包路径不同（Fabric 为 `data/<ns>/tags/action/`，Forge 为 `data/<ns>/tags/hexcasting/action/`）。在 Connector 互联环境下（Forge 运行 Fabric 版附属），Forge 的 TagLoader 只读 Forge 路径，导致 Fabric 附属的 tag（如 `requires_enlightenment`、`per_world_pattern`）全部丢失。本模组在**服务器启动时**自动扫描所有数据包（含 mods 目录 jar），把 Fabric 路径的 tag 复制进 `hexcasting:action` 注册表，恢复这些 tag。可在配置中关闭（`server.fixTags`，默认开启）。
+- **原生 NeoForge action tag / Native NeoForge action tags**：此移植直接使用 NeoForge 1.21.1 的 Hex Casting action tag，不再运行旧版 Connector/Fabric 路径扫描器。创造标签页的卓越法术和每世界图案排除列表由服务端在登录时同步。
 
-  Fabric and Forge use different datapack paths for `hexcasting:action` tags (`data/<ns>/tags/action/` vs `data/<ns>/tags/hexcasting/action/`). Under Connector (Fabric addons on Forge), Forge's TagLoader only reads the Forge path, so Fabric addon tags (e.g. `requires_enlightenment`, `per_world_pattern`) are lost. This mod scans all datapacks (including mods-dir jars) at **server start** and copies Fabric-path tags into the `hexcasting:action` registry. Disablable via `server.fixTags` (default on).
+  This port uses the native NeoForge 1.21.1 Hex Casting action tags. The old Connector/Fabric path scanner is not active; the server synchronizes the great-spell and per-world exclusions when a player logs in.
 
 ## 翻译状态 / Translation status
 

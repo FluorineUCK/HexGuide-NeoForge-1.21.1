@@ -1,0 +1,58 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "hexguide"
+version = "${version}"
+displayName = "Hex Guide"
+logoFile = "assets/hexguide/icon.png"
+authors = "xm1221"
+description = "Hex Guide addon for Hex Casting"
+displayURL = "https://xm1221.github.io/HexGuide"
+
+[[mixins]]
+config = "hexguide-common.mixins.json"
+
+[[dependencies.hexguide]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.234,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.hexguide]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.hexguide]]
+modId = "kotlinforforge"
+type = "required"
+versionRange = "[5.12.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.hexguide]]
+modId = "hexcasting"
+type = "required"
+versionRange = "[0.12.0-devel-pre-39,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.hexguide]]
+modId = "patchouli"
+type = "required"
+versionRange = "[1.21.1-93,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.hexguide]]
+modId = "inline"
+type = "required"
+versionRange = "[1.2.2,)"
+ordering = "AFTER"
+side = "BOTH"
+
